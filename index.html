@@ -1,64 +1,99 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>学习平台</title>
+  <title>数字猜谜小游戏</title>
   <style>
+    /* 简单美化样式 */
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f4f4f4;
-    }
-    .container {
-      display: flex;
-      justify-content: space-between;
-    }
-    .left-section, .right-section {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-    }
-    h2 {
+      background-color: #f0f8ff;
       text-align: center;
-      margin-bottom: 20px;
+      padding-top: 50px;
+    }
+    .game-box {
+      background-color: white;
+      width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    input {
+      padding: 8px;
+      width: 150px;
+      margin-right: 10px;
     }
     button {
       padding: 8px 15px;
+      background-color: #4CAF50;
+      color: white;
       border: none;
       border-radius: 5px;
-      background-color: #007BFF;
-      color: white;
       cursor: pointer;
-      margin-right: 10px;
     }
-    .tag {
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 20px;
-      background-color: #ccc;
-      margin-right: 5px;
-      margin-bottom: 10px;
+    button:hover {
+      background-color: #45a049;
     }
-    .circle {
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 5px;
+    #hint {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
     }
-    .arrow {
-      width: 0;
-      height: 0;
-      border-top: 6px solid transparent;
-      border-bottom: 6px solid transparent;
-      border-left: 10px solid #000;
-      display: inline-block;
-      margin: 0 8px;
+    .success {
+      color: #4CAF50;
+      font-weight: bold;
     }
-    .item {
-      margin-bottom: 15px;
+    .error {
+      color: #f44336;
     }
+  </style>
+</head>
+<body>
+  <div class="game-box">
+    <h2>数字猜谜游戏</h2>
+    <p>我随机生成了 1-100 之间的一个数字，猜猜是多少？</p>
+    <input type="number" id="guessInput" min="1" max="100" placeholder="输入猜测的数字">
+    <button onclick="checkGuess()">提交答案</button>
+    <div id="hint"></div>
+  </div>
+
+  <script>
+    // 生成1-100的随机数
+    const randomNum = Math.floor(Math.random() * 100) + 1;
+    // 记录猜测次数
+    let guessCount = 0;
+
+    // 验证猜测结果
+    function checkGuess() {
+      // 获取输入的数字
+      const userInput = document.getElementById('guessInput').value;
+      const hintBox = document.getElementById('hint');
+      
+      // 校验输入（非空/数字/范围）
+      if (!userInput || isNaN(userInput) || userInput < 1 || userInput > 100) {
+        hintBox.innerHTML = '<span class="error">请输入1-100之间的有效数字！</span>';
+        return;
+      }
+
+      guessCount++;
+      const guessNum = parseInt(userInput);
+
+      // 判断大小/是否猜对
+      if (guessNum === randomNum) {
+        hintBox.innerHTML = `<span class="success">恭喜你猜对了！总共猜了 ${guessCount} 次 🎉</span>`;
+        // 猜对后禁用按钮和输入框
+        document.getElementById('guessInput').disabled = true;
+        document.querySelector('button').disabled = true;
+      } else if (guessNum > randomNum) {
+        hintBox.innerHTML = '<span class="error">猜大了！再试试～</span>';
+      } else {
+        hintBox.innerHTML = '<span class="error">猜小了！再试试～</span>';
+      }
+
+      // 清空输入框
+      document.getElementById('guessInput').value = '';
+    }
+  </script>
+</body>
+</html>
