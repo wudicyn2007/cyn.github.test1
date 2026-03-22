@@ -2,97 +2,301 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>数字猜谜小游戏</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C++语法简易检查工具</title>
   <style>
-    /* 简单美化样式 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f8ff;
-      text-align: center;
-      padding-top: 50px;
-    }
-    .game-box {
-      background-color: white;
-      width: 400px;
-      margin: 0 auto;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
-    input {
-      padding: 8px;
-      width: 150px;
-      margin-right: 10px;
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      overflow: hidden;
     }
-    button {
-      padding: 8px 15px;
-      background-color: #4CAF50;
+
+    .header {
+      background: #2d3748;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      opacity: 0.8;
+      font-size: 14px;
+    }
+
+    .content {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+
+    .editor-box, .result-box {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .title {
+      font-size: 18px;
+      color: #2d3748;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title i {
+      color: #667eea;
+    }
+
+    textarea {
+      width: 100%;
+      height: 300px;
+      padding: 15px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: vertical;
+      font-family: 'Consolas', monospace;
+      transition: border 0.3s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      background: #667eea;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
+      transition: background 0.3s;
+      align-self: flex-start;
     }
-    button:hover {
-      background-color: #45a049;
+
+    .btn:hover {
+      background: #5a67d8;
     }
-    #hint {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #333;
+
+    .btn:active {
+      transform: scale(0.98);
     }
-    .success {
-      color: #4CAF50;
-      font-weight: bold;
+
+    .result-area {
+      width: 100%;
+      height: 300px;
+      padding: 15px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+      font-size: 14px;
+      line-height: 1.6;
+      font-family: 'Consolas', monospace;
+      overflow-y: auto;
+      white-space: pre-wrap;
     }
+
     .error {
-      color: #f44336;
+      color: #dc2626;
+    }
+
+    .success {
+      color: #059669;
+    }
+
+    .warning {
+      color: #d97706;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 768px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
+  <!-- 引入图标（可选，仅美化） -->
+  <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="game-box">
-    <h2>数字猜谜游戏</h2>
-    <p>我随机生成了 1-100 之间的一个数字，猜猜是多少？</p>
-    <input type="number" id="guessInput" min="1" max="100" placeholder="输入猜测的数字">
-    <button onclick="checkGuess()">提交答案</button>
-    <div id="hint"></div>
+  <div class="container">
+    <div class="header">
+      <h1>C++语法简易检查工具</h1>
+      <p>仅检测基础语法错误（括号/分号/关键字/引号），复杂语法暂不支持</p>
+    </div>
+
+    <div class="content">
+      <!-- 代码输入区 -->
+      <div class="editor-box">
+        <div class="title">
+          <i class="fas fa-code"></i> 输入C++代码
+        </div>
+        <textarea id="codeInput" placeholder="请输入要检查的C++代码，例如：
+#include <iostream>
+using namespace std;
+
+int main() {
+  cout << 'Hello World'  // 缺少分号
+  return 0;
+}"></textarea>
+        <button class="btn" onclick="checkSyntax()">
+          <i class="fas fa-search"></i> 检查语法
+        </button>
+        <button class="btn" style="background: #94a3b8;" onclick="clearContent()">
+          <i class="fas fa-trash"></i> 清空内容
+        </button>
+      </div>
+
+      <!-- 结果输出区 -->
+      <div class="result-box">
+        <div class="title">
+          <i class="fas fa-clipboard-check"></i> 检查结果
+        </div>
+        <div id="resultArea" class="result-area">
+          请输入代码并点击「检查语法」按钮开始检测...
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    // 生成1-100的随机数
-    const randomNum = Math.floor(Math.random() * 100) + 1;
-    // 记录猜测次数
-    let guessCount = 0;
+    // 清空输入和结果
+    function clearContent() {
+      document.getElementById('codeInput').value = '';
+      document.getElementById('resultArea').innerText = '请输入代码并点击「检查语法」按钮开始检测...';
+    }
 
-    // 验证猜测结果
-    function checkGuess() {
-      // 获取输入的数字
-      const userInput = document.getElementById('guessInput').value;
-      const hintBox = document.getElementById('hint');
+    // 核心语法检查逻辑
+    function checkSyntax() {
+      const code = document.getElementById('codeInput').value.trim();
+      const resultArea = document.getElementById('resultArea');
       
-      // 校验输入（非空/数字/范围）
-      if (!userInput || isNaN(userInput) || userInput < 1 || userInput > 100) {
-        hintBox.innerHTML = '<span class="error">请输入1-100之间的有效数字！</span>';
+      // 空代码判断
+      if (!code) {
+        resultArea.innerHTML = '<span class="warning">⚠️ 未输入任何代码，请输入后重试！</span>';
         return;
       }
 
-      guessCount++;
-      const guessNum = parseInt(userInput);
+      // 初始化错误列表
+      const errors = [];
+      let lineNum = 1;
 
-      // 判断大小/是否猜对
-      if (guessNum === randomNum) {
-        hintBox.innerHTML = `<span class="success">恭喜你猜对了！总共猜了 ${guessCount} 次 🎉</span>`;
-        // 猜对后禁用按钮和输入框
-        document.getElementById('guessInput').disabled = true;
-        document.querySelector('button').disabled = true;
-      } else if (guessNum > randomNum) {
-        hintBox.innerHTML = '<span class="error">猜大了！再试试～</span>';
-      } else {
-        hintBox.innerHTML = '<span class="error">猜小了！再试试～</span>';
+      // 按行分割代码，逐行检查
+      const lines = code.split('\n');
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        
+        // 1. 检查分号缺失（排除注释、花括号、关键字行）
+        if (!trimmedLine.startsWith('//') && !trimmedLine.startsWith('/*') && 
+            !trimmedLine.endsWith('{') && !trimmedLine.endsWith('}') &&
+            !trimmedLine.includes('if') && !trimmedLine.includes('for') && 
+            !trimmedLine.includes('while') && !trimmedLine.includes('do') &&
+            !trimmedLine.includes('class') && !trimmedLine.includes('int') &&
+            !trimmedLine.includes('float') && !trimmedLine.includes('double') &&
+            !trimmedLine.includes('char') && !trimmedLine.includes('bool') &&
+            trimmedLine.length > 0) {
+          // 排除函数定义行（如 int main()）
+          if (!trimmedLine.includes('(') || trimmedLine.includes(') {')) {
+            if (!trimmedLine.endsWith(';') && !trimmedLine.endsWith(')')) {
+              errors.push(`第${lineNum}行：可能缺失分号 ;`);
+            }
+          }
+        }
+
+        // 2. 检查括号不匹配（仅统计数量）
+        const leftBrace = (line.match(/{/g) || []).length;
+        const rightBrace = (line.match(/}/g) || []).length;
+        const leftParen = (line.match(/\(/g) || []).length;
+        const rightParen = (line.match(/\)/g) || []).length;
+        
+        if (leftBrace !== rightBrace) {
+          errors.push(`第${lineNum}行：花括号 {} 数量不匹配`);
+        }
+        if (leftParen !== rightParen) {
+          errors.push(`第${lineNum}行：小括号 () 数量不匹配`);
+        }
+
+        // 3. 检查引号不匹配
+        const singleQuote = (line.match(/'/g) || []).length;
+        const doubleQuote = (line.match(/"/g) || []).length;
+        if (singleQuote % 2 !== 0) {
+          errors.push(`第${lineNum}行：单引号 ' 未闭合`);
+        }
+        if (doubleQuote % 2 !== 0) {
+          errors.push(`第${lineNum}行：双引号 " 未闭合`);
+        }
+
+        // 4. 检查常见关键字拼写错误
+        const wrongKeywords = [
+          { wrong: 'inclued', right: 'include' },
+          { wrong: 'iostreamm', right: 'iostream' },
+          { wrong: 'usnig', right: 'using' },
+          { wrong: 'namespacee', right: 'namespace' },
+          { wrong: 'stds', right: 'std' },
+          { wrong: 'mainn', right: 'main' },
+          { wrong: 'couts', right: 'cout' },
+          { wrong: 'cins', right: 'cin' },
+          { wrong: 'retunn', right: 'return' }
+        ];
+        
+        for (const kw of wrongKeywords) {
+          if (line.includes(kw.wrong)) {
+            errors.push(`第${lineNum}行：疑似关键字拼写错误，${kw.wrong} 应为 ${kw.right}`);
+          }
+        }
+
+        lineNum++;
       }
 
-      // 清空输入框
-      document.getElementById('guessInput').value = '';
+      // 生成检查结果
+      if (errors.length === 0) {
+        // 简单判断是否为复杂代码（行数多/包含复杂关键字）
+        const complexKeywords = ['template', 'namespace', 'class', 'inheritance', 'polymorphism'];
+        let isComplex = lines.length > 20;
+        complexKeywords.forEach(kw => {
+          if (code.includes(kw)) isComplex = true;
+        });
+
+        if (isComplex) {
+          resultArea.innerHTML = '<span class="warning">⚠️ 代码较复杂，无法完全判断语法正确性，未检测到基础语法错误</span>';
+        } else {
+          resultArea.innerHTML = '<span class="success">✅ 未检测到基础语法错误（括号/分号/关键字/引号）</span>';
+        }
+      } else {
+        let resultText = '<span class="error">❌ 检测到以下基础语法错误：\n</span>';
+        errors.forEach((err, idx) => {
+          resultText += `${idx + 1}. ${err}\n`;
+        });
+        resultArea.innerHTML = resultText;
+      }
     }
   </script>
 </body>
