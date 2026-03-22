@@ -1,27 +1,65 @@
+抱歉，是不完整，完整代码如下：
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>简易学习平台示例</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学习平台</title>
   <style>
-    button {margin: 5px;}
-    .section {border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;}
-  </style>
-</head>
-<body>
-  <h2>简易学习平台</h2>
-  <div class="section">
-    <button>知识图谱</button>
-    <button>进化史</button>
-  </div>
-  <div class="section">
-    <span>回归</span>
-    <span>分类</span>
-    <span>神经网络</span>
-  </div>
-  <div class="section">
-    <button>线性回归</button>
-    <button>逻辑回归</button>
-  </div>
-</body>
-</html>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      display: flex;
+      justify-content: space-between;
+    }
+    .left-section, .right-section {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      background-color: #ccc;
+      margin-right: 5px;
+      margin-bottom: 10px;
+    }
+    .circle {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+    }
+    .arrow {
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 10px solid #000;
+      display: inline-block;
+      margin: 0 8px;
+    }
+    .item {
+      margin-bottom: 15px;
+    }
