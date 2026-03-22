@@ -3,300 +3,624 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>C++语法简易检查工具</title>
+  <title>增强版C++语法检查工具</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      font-family: 'Microsoft YaHei', Consolas, monospace;
     }
 
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
       min-height: 100vh;
       padding: 20px;
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
       overflow: hidden;
     }
 
     .header {
-      background: #2d3748;
-      color: white;
-      padding: 20px;
+      background: #1a2530;
+      color: #fff;
+      padding: 25px;
       text-align: center;
     }
 
     .header h1 {
-      font-size: 24px;
-      margin-bottom: 8px;
+      font-size: 28px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
     }
 
     .header p {
       opacity: 0.8;
-      font-size: 14px;
+      font-size: 15px;
+      max-width: 800px;
+      margin: 0 auto;
     }
 
     .content {
-      padding: 30px;
+      padding: 35px;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 25px;
+      gap: 30px;
+    }
+
+    @media (max-width: 900px) {
+      .content {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
     }
 
     .editor-box, .result-box {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 20px;
     }
 
-    .title {
-      font-size: 18px;
-      color: #2d3748;
+    .section-title {
+      font-size: 20px;
+      color: #1a2530;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #4ca1af;
+    }
+
+    .section-title i {
+      color: #4ca1af;
+      font-size: 22px;
+    }
+
+    textarea#codeInput {
+      width: 100%;
+      height: 350px;
+      padding: 20px;
+      border: 1px solid #e0e6ed;
+      border-radius: 10px;
+      font-size: 15px;
+      line-height: 1.6;
+      resize: vertical;
+      background: #f8fafc;
+      transition: all 0.3s ease;
+    }
+
+    textarea#codeInput:focus {
+      outline: none;
+      border-color: #4ca1af;
+      box-shadow: 0 0 0 4px rgba(76, 161, 175, 0.1);
+      background: #fff;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .title i {
-      color: #667eea;
+    .btn-check {
+      background: #4ca1af;
+      color: #fff;
     }
 
-    textarea {
-      width: 100%;
-      height: 300px;
-      padding: 15px;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 14px;
-      line-height: 1.5;
-      resize: vertical;
-      font-family: 'Consolas', monospace;
-      transition: border 0.3s;
+    .btn-check:hover {
+      background: #3d8b97;
+      transform: translateY(-2px);
     }
 
-    textarea:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    .btn-check:active {
+      transform: translateY(0);
     }
 
-    .btn {
-      padding: 12px 24px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s;
-      align-self: flex-start;
+    .btn-clear {
+      background: #94a3b8;
+      color: #fff;
     }
 
-    .btn:hover {
-      background: #5a67d8;
+    .btn-clear:hover {
+      background: #718096;
     }
 
-    .btn:active {
-      transform: scale(0.98);
+    .btn-reset {
+      background: #f59e0b;
+      color: #fff;
+    }
+
+    .btn-reset:hover {
+      background: #d97706;
     }
 
     .result-area {
       width: 100%;
-      height: 300px;
-      padding: 15px;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
+      height: 350px;
+      padding: 20px;
+      border: 1px solid #e0e6ed;
+      border-radius: 10px;
       background: #f8fafc;
-      font-size: 14px;
-      line-height: 1.6;
-      font-family: 'Consolas', monospace;
+      font-size: 15px;
+      line-height: 1.8;
       overflow-y: auto;
       white-space: pre-wrap;
+      font-family: Consolas, monospace;
     }
 
-    .error {
-      color: #dc2626;
-    }
-
-    .success {
-      color: #059669;
-    }
-
-    .warning {
-      color: #d97706;
-    }
-
-    /* 响应式适配 */
-    @media (max-width: 768px) {
-      .content {
-        grid-template-columns: 1fr;
-      }
-    }
+    /* 结果样式 */
+    .error { color: #dc2626; }
+    .success { color: #059669; }
+    .warning { color: #d97706; }
+    .info { color: #2563eb; }
+    .line-num { color: #64748b; font-weight: 600; }
   </style>
-  <!-- 引入图标（可选，仅美化） -->
   <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>C++语法简易检查工具</h1>
-      <p>仅检测基础语法错误（括号/分号/关键字/引号），复杂语法暂不支持</p>
+      <h1>增强版 C++ 语法检查工具</h1>
+      <p>支持跨行括号校验 | 分号/引号/关键字检测 | 注释识别 | 变量/函数基础校验 | 复杂代码智能判断</p>
     </div>
 
     <div class="content">
       <!-- 代码输入区 -->
       <div class="editor-box">
-        <div class="title">
+        <div class="section-title">
           <i class="fas fa-code"></i> 输入C++代码
         </div>
-        <textarea id="codeInput" placeholder="请输入要检查的C++代码，例如：
+        <textarea id="codeInput" placeholder="请输入C++代码（支持多行/跨行结构）：
 #include <iostream>
 using namespace std;
 
 int main() {
-  cout << 'Hello World'  // 缺少分号
-  return 0;
+    int a = 10;
+    if (a > 5) {
+        cout << "Hello World" << endl;  // 正确示例
+        for (int i=0; i<5; i++) {
+            cout << i;
+        }
+    }
+    return 0;
 }"></textarea>
-        <button class="btn" onclick="checkSyntax()">
-          <i class="fas fa-search"></i> 检查语法
-        </button>
-        <button class="btn" style="background: #94a3b8;" onclick="clearContent()">
-          <i class="fas fa-trash"></i> 清空内容
-        </button>
+        <div class="btn-group">
+          <button class="btn btn-check" onclick="checkSyntax()">
+            <i class="fas fa-search"></i> 检查语法
+          </button>
+          <button class="btn btn-clear" onclick="clearCode()">
+            <i class="fas fa-trash"></i> 清空代码
+          </button>
+          <button class="btn btn-reset" onclick="resetResult()">
+            <i class="fas fa-refresh"></i> 重置结果
+          </button>
+        </div>
       </div>
 
       <!-- 结果输出区 -->
       <div class="result-box">
-        <div class="title">
+        <div class="section-title">
           <i class="fas fa-clipboard-check"></i> 检查结果
         </div>
         <div id="resultArea" class="result-area">
-          请输入代码并点击「检查语法」按钮开始检测...
+          📌 请输入代码并点击「检查语法」按钮开始检测
+          📌 支持检测：跨行括号/分号/引号/关键字/注释/变量声明/函数结构等基础语法
+          📌 复杂代码（如模板/继承/多态）会提示「无法完全判断」
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // 清空输入和结果
-    function clearContent() {
+    // 全局变量：存储括号匹配的栈
+    let braceStack = [];    // 花括号 {}
+    let parenStack = [];    // 小括号 ()
+    let bracketStack = [];  // 中括号 []
+    let commentState = { inLineComment: false, inBlockComment: false }; // 注释状态
+
+    // 清空代码输入框
+    function clearCode() {
       document.getElementById('codeInput').value = '';
-      document.getElementById('resultArea').innerText = '请输入代码并点击「检查语法」按钮开始检测...';
+      resetResult();
     }
 
-    // 核心语法检查逻辑
+    // 重置结果区域
+    function resetResult() {
+      document.getElementById('resultArea').innerHTML = 
+        '📌 请输入代码并点击「检查语法」按钮开始检测\n' +
+        '📌 支持检测：跨行括号/分号/引号/关键字/注释/变量声明/函数结构等基础语法\n' +
+        '📌 复杂代码（如模板/继承/多态）会提示「无法完全判断」';
+      // 重置状态
+      braceStack = [];
+      parenStack = [];
+      bracketStack = [];
+      commentState = { inLineComment: false, inBlockComment: false };
+    }
+
+    // 核心语法检查函数
     function checkSyntax() {
       const code = document.getElementById('codeInput').value.trim();
       const resultArea = document.getElementById('resultArea');
       
+      // 初始化
+      let errors = [];
+      let warnings = [];
+      let infos = [];
+      let lineNum = 1;
+      braceStack = [];
+      parenStack = [];
+      bracketStack = [];
+      commentState = { inLineComment: false, inBlockComment: false };
+
       // 空代码判断
       if (!code) {
         resultArea.innerHTML = '<span class="warning">⚠️ 未输入任何代码，请输入后重试！</span>';
         return;
       }
 
-      // 初始化错误列表
-      const errors = [];
-      let lineNum = 1;
-
-      // 按行分割代码，逐行检查
+      // 预处理：移除注释（避免注释内的符号干扰检测）+ 逐行分析
       const lines = code.split('\n');
-      for (const line of lines) {
-        const trimmedLine = line.trim();
+      const codeWithoutComments = []; // 存储移除注释后的代码（用于后续校验）
+      const varDeclared = new Set();  // 已声明的变量
+      const funcDeclared = new Set(); // 已声明的函数
+      let inFunction = false;         // 是否在函数内
+      let funcName = '';              // 当前函数名
+
+      // 第一步：逐行处理（注释识别 + 括号校验 + 基础语法）
+      for (let line of lines) {
+        let originalLine = line;
+        line = line.trim();
+        codeWithoutComments.push(originalLine);
+
+        // 1. 注释状态处理
+        handleComments(line, lineNum, errors);
         
-        // 1. 检查分号缺失（排除注释、花括号、关键字行）
-        if (!trimmedLine.startsWith('//') && !trimmedLine.startsWith('/*') && 
-            !trimmedLine.endsWith('{') && !trimmedLine.endsWith('}') &&
-            !trimmedLine.includes('if') && !trimmedLine.includes('for') && 
-            !trimmedLine.includes('while') && !trimmedLine.includes('do') &&
-            !trimmedLine.includes('class') && !trimmedLine.includes('int') &&
-            !trimmedLine.includes('float') && !trimmedLine.includes('double') &&
-            !trimmedLine.includes('char') && !trimmedLine.includes('bool') &&
-            trimmedLine.length > 0) {
-          // 排除函数定义行（如 int main()）
-          if (!trimmedLine.includes('(') || trimmedLine.includes(') {')) {
-            if (!trimmedLine.endsWith(';') && !trimmedLine.endsWith(')')) {
-              errors.push(`第${lineNum}行：可能缺失分号 ;`);
-            }
-          }
+        // 跳过纯注释行（避免干扰）
+        if (commentState.inLineComment || (line.startsWith('//') && !commentState.inBlockComment)) {
+          lineNum++;
+          commentState.inLineComment = false;
+          continue;
         }
 
-        // 2. 检查括号不匹配（仅统计数量）
-        const leftBrace = (line.match(/{/g) || []).length;
-        const rightBrace = (line.match(/}/g) || []).length;
-        const leftParen = (line.match(/\(/g) || []).length;
-        const rightParen = (line.match(/\)/g) || []).length;
-        
-        if (leftBrace !== rightBrace) {
-          errors.push(`第${lineNum}行：花括号 {} 数量不匹配`);
-        }
-        if (leftParen !== rightParen) {
-          errors.push(`第${lineNum}行：小括号 () 数量不匹配`);
+        // 2. 跨行括号校验（核心修复点）
+        if (!commentState.inBlockComment) {
+          checkBrackets(originalLine, lineNum, errors);
         }
 
-        // 3. 检查引号不匹配
-        const singleQuote = (line.match(/'/g) || []).length;
-        const doubleQuote = (line.match(/"/g) || []).length;
-        if (singleQuote % 2 !== 0) {
-          errors.push(`第${lineNum}行：单引号 ' 未闭合`);
-        }
-        if (doubleQuote % 2 !== 0) {
-          errors.push(`第${lineNum}行：双引号 " 未闭合`);
+        // 3. 分号校验（排除注释、括号行、关键字行）
+        if (!commentState.inBlockComment && !commentState.inLineComment) {
+          checkSemicolon(originalLine, lineNum, errors);
         }
 
-        // 4. 检查常见关键字拼写错误
-        const wrongKeywords = [
-          { wrong: 'inclued', right: 'include' },
-          { wrong: 'iostreamm', right: 'iostream' },
-          { wrong: 'usnig', right: 'using' },
-          { wrong: 'namespacee', right: 'namespace' },
-          { wrong: 'stds', right: 'std' },
-          { wrong: 'mainn', right: 'main' },
-          { wrong: 'couts', right: 'cout' },
-          { wrong: 'cins', right: 'cin' },
-          { wrong: 'retunn', right: 'return' }
-        ];
-        
-        for (const kw of wrongKeywords) {
-          if (line.includes(kw.wrong)) {
-            errors.push(`第${lineNum}行：疑似关键字拼写错误，${kw.wrong} 应为 ${kw.right}`);
-          }
+        // 4. 引号校验（单/双引号、字符串）
+        if (!commentState.inBlockComment && !commentState.inLineComment) {
+          checkQuotes(originalLine, lineNum, errors);
         }
+
+        // 5. 关键字拼写错误校验
+        checkKeywordSpelling(originalLine, lineNum, errors);
+
+        // 6. 变量声明校验（基础类型）
+        checkVariableDeclaration(originalLine, lineNum, varDeclared, errors, warnings);
+
+        // 7. 函数结构校验
+        checkFunctionStructure(originalLine, lineNum, funcDeclared, errors, warnings, inFunction, funcName);
 
         lineNum++;
       }
 
-      // 生成检查结果
-      if (errors.length === 0) {
-        // 简单判断是否为复杂代码（行数多/包含复杂关键字）
-        const complexKeywords = ['template', 'namespace', 'class', 'inheritance', 'polymorphism'];
-        let isComplex = lines.length > 20;
-        complexKeywords.forEach(kw => {
-          if (code.includes(kw)) isComplex = true;
-        });
+      // 第二步：全局校验（括号未闭合、注释未闭合等）
+      checkGlobalIssues(errors);
 
-        if (isComplex) {
-          resultArea.innerHTML = '<span class="warning">⚠️ 代码较复杂，无法完全判断语法正确性，未检测到基础语法错误</span>';
-        } else {
-          resultArea.innerHTML = '<span class="success">✅ 未检测到基础语法错误（括号/分号/关键字/引号）</span>';
-        }
-      } else {
-        let resultText = '<span class="error">❌ 检测到以下基础语法错误：\n</span>';
+      // 第三步：复杂代码判断
+      const isComplex = checkComplexCode(code, lines.length);
+
+      // 第四步：生成结果
+      let resultText = '';
+      
+      // 错误信息
+      if (errors.length > 0) {
+        resultText += '<span class="error">❌ 检测到以下语法错误：\n</span>';
         errors.forEach((err, idx) => {
           resultText += `${idx + 1}. ${err}\n`;
         });
-        resultArea.innerHTML = resultText;
       }
+
+      // 警告信息
+      if (warnings.length > 0) {
+        resultText += '\n<span class="warning">⚠️ 检测到以下潜在问题：\n</span>';
+        warnings.forEach((warn, idx) => {
+          resultText += `${idx + 1}. ${warn}\n`;
+        });
+      }
+
+      // 信息提示
+      if (infos.length > 0) {
+        resultText += '\n<span class="info">ℹ️ 补充信息：\n</span>';
+        infos.forEach((info, idx) => {
+          resultText += `${idx + 1}. ${info}\n`;
+        });
+      }
+
+      // 无错误情况
+      if (errors.length === 0 && warnings.length === 0) {
+        if (isComplex) {
+          resultText += '<span class="warning">⚠️ 代码包含复杂语法（模板/继承/多态等），无法完全判断正确性</span>\n';
+          resultText += '<span class="success">✅ 未检测到基础语法错误（括号/分号/引号/关键字等）</span>';
+        } else {
+          resultText += '<span class="success">✅ 未检测到任何基础语法错误！</span>';
+        }
+      } else if (isComplex && errors.length === 0) {
+        resultText += '\n<span class="warning">⚠️ 代码包含复杂语法，部分高级错误可能无法检测</span>';
+      }
+
+      resultArea.innerHTML = resultText;
+    }
+
+    // 1. 注释处理（识别单行/多行注释，避免干扰）
+    function handleComments(line, lineNum, errors) {
+      // 多行注释开始 /*
+      if (line.includes('/*') && !commentState.inLineComment) {
+        commentState.inBlockComment = true;
+        // 检查是否有结束 */
+        if (line.includes('*/')) {
+          commentState.inBlockComment = false;
+        }
+      }
+      // 多行注释结束 */
+      else if (line.includes('*/') && commentState.inBlockComment) {
+        commentState.inBlockComment = false;
+      }
+      // 单行注释 //
+      else if (line.includes('//') && !commentState.inBlockComment) {
+        commentState.inLineComment = true;
+      }
+
+      // 多行注释未闭合
+      if (lineNum === lines.length && commentState.inBlockComment) {
+        errors.push(`<span class="line-num">全局</span>：多行注释 /* */ 未闭合`);
+      }
+    }
+
+    // 2. 跨行括号校验（核心修复）
+    function checkBrackets(line, lineNum, errors) {
+      const chars = line.split('');
+      
+      for (let i = 0; i < chars.length; i++) {
+        const char = chars[i];
+        
+        // 花括号 {}
+        if (char === '{') {
+          braceStack.push({ line: lineNum, pos: i + 1 });
+        } else if (char === '}') {
+          if (braceStack.length === 0) {
+            errors.push(`<span class="line-num">第${lineNum}行</span>：多余的右花括号 }（位置${i + 1}）`);
+          } else {
+            braceStack.pop();
+          }
+        }
+
+        // 小括号 ()
+        if (char === '(') {
+          parenStack.push({ line: lineNum, pos: i + 1 });
+        } else if (char === ')') {
+          if (parenStack.length === 0) {
+            errors.push(`<span class="line-num">第${lineNum}行</span>：多余的右小括号 )（位置${i + 1}）`);
+          } else {
+            parenStack.pop();
+          }
+        }
+
+        // 中括号 []
+        if (char === '[') {
+          bracketStack.push({ line: lineNum, pos: i + 1 });
+        } else if (char === ']') {
+          if (bracketStack.length === 0) {
+            errors.push(`<span class="line-num">第${lineNum}行</span>：多余的右中括号 ]（位置${i + 1}）`);
+          } else {
+            bracketStack.pop();
+          }
+        }
+      }
+    }
+
+    // 3. 分号校验
+    function checkSemicolon(line, lineNum, errors) {
+      const trimmedLine = line.trim();
+      
+      // 排除不需要分号的行
+      const noSemicolonPatterns = [
+        /^if\s*\(/, /^for\s*\(/, /^while\s*\(/, /^do$/, 
+        /^switch\s*\(/, /^case\s+.+:/, /^default:/,
+        /^\{/, /^\}/, /^\/\//, /^\/\*/, /\*\//,
+        /^class\s+/, /^struct\s+/, /^enum\s+/,
+        /^int\s+\w+\(/, /^float\s+\w+\(/, /^double\s+\w+\(/, // 函数定义
+        /^void\s+\w+\(/, /^bool\s+\w+\(/, /^char\s+\w+\(/
+      ];
+
+      // 检查是否匹配排除模式
+      let isExcluded = false;
+      for (const pattern of noSemicolonPatterns) {
+        if (pattern.test(trimmedLine)) {
+          isExcluded = true;
+          break;
+        }
+      }
+
+      // 检查分号
+      if (!isExcluded && trimmedLine.length > 0) {
+        // 排除函数调用/表达式中间行（如 cout << "a" << "b"）
+        const lastChar = trimmedLine.slice(-1);
+        const excludeLastChars = ['(', '{', '[', '+', '-', '*', '/', '=', '<', '>', '&', '|', ',', '.'];
+        if (!excludeLastChars.includes(lastChar) && !trimmedLine.endsWith(';')) {
+          // 排除字符串内的内容
+          if (!trimmedLine.includes('"') || trimmedLine.lastIndexOf('"') < trimmedLine.length - 1) {
+            errors.push(`<span class="line-num">第${lineNum}行</span>：语句末尾可能缺失分号 ;`);
+          }
+        }
+      }
+    }
+
+    // 4. 引号校验
+    function checkQuotes(line, lineNum, errors) {
+      // 单引号
+      const singleQuotes = line.split("'").length - 1;
+      if (singleQuotes % 2 !== 0) {
+        errors.push(`<span class="line-num">第${lineNum}行</span>：单引号 ' 未闭合`);
+      }
+
+      // 双引号（字符串）
+      const doubleQuotes = line.split('"').length - 1;
+      if (doubleQuotes % 2 !== 0) {
+        errors.push(`<span class="line-num">第${lineNum}行</span>：双引号 " 未闭合`);
+      }
+    }
+
+    // 5. 关键字拼写校验（扩充更多关键字）
+    function checkKeywordSpelling(line, lineNum, errors) {
+      const wrongKeywords = [
+        { wrong: 'inclued', right: 'include' },
+        { wrong: 'iostreamm', right: 'iostream' },
+        { wrong: 'usnig', right: 'using' },
+        { wrong: 'namespacee', right: 'namespace' },
+        { wrong: 'stds', right: 'std' },
+        { wrong: 'mainn', right: 'main' },
+        { wrong: 'couts', right: 'cout' },
+        { wrong: 'cins', right: 'cin' },
+        { wrong: 'retunn', right: 'return' },
+        { wrong: 'iif', right: 'if' },
+        { wrong: 'elsee', right: 'else' },
+        { wrong: 'forr', right: 'for' },
+        { wrong: 'whilee', right: 'while' },
+        { wrong: 'doo', right: 'do' },
+        { wrong: 'switchh', right: 'switch' },
+        { wrong: 'casee', right: 'case' },
+        { wrong: 'breakk', right: 'break' },
+        { wrong: 'continuee', right: 'continue' },
+        { wrong: 'intt', right: 'int' },
+        { wrong: 'floatt', right: 'float' },
+        { wrong: 'doublee', right: 'double' },
+        { wrong: 'charr', right: 'char' },
+        { wrong: 'booll', right: 'bool' },
+        { wrong: 'voidd', right: 'void' },
+        { wrong: 'classe', right: 'class' },
+        { wrong: 'structt', right: 'struct' }
+      ];
+
+      for (const kw of wrongKeywords) {
+        if (line.includes(kw.wrong)) {
+          errors.push(`<span class="line-num">第${lineNum}行</span>：疑似关键字拼写错误，${kw.wrong} 应为 ${kw.right}`);
+        }
+      }
+    }
+
+    // 6. 变量声明校验（基础）
+    function checkVariableDeclaration(line, lineNum, varDeclared, errors, warnings) {
+      const varPatterns = [
+        /\bint\s+(\w+)\b/, /\bfloat\s+(\w+)\b/, /\bdouble\s+(\w+)\b/,
+        /\bchar\s+(\w+)\b/, /\bbool\s+(\w+)\b/, /\bstring\s+(\w+)\b/
+      ];
+
+      // 匹配变量声明
+      for (const pattern of varPatterns) {
+        const match = line.match(pattern);
+        if (match && match[1]) {
+          varDeclared.add(match[1]);
+        }
+      }
+
+      // 检查未声明变量（简单匹配：等号左边的标识符）
+      const assignPattern = /(\w+)\s*=/;
+      const assignMatch = line.match(assignPattern);
+      if (assignMatch && assignMatch[1]) {
+        const varName = assignMatch[1];
+        // 排除关键字和函数名
+        const keywords = ['int', 'float', 'double', 'char', 'bool', 'cout', 'cin', 'endl', 'if', 'for', 'while'];
+        if (!varDeclared.has(varName) && !keywords.includes(varName) && !varName.includes('.')) {
+          warnings.push(`<span class="line-num">第${lineNum}行</span>：变量 ${varName} 可能未声明（或未检测到声明）`);
+        }
+      }
+    }
+
+    // 7. 函数结构校验
+    function checkFunctionStructure(line, lineNum, funcDeclared, errors, warnings, inFunction, funcName) {
+      // 匹配函数定义（如 int main()、void test()）
+      const funcPattern = /\b(\w+)\s+(\w+)\s*\(/;
+      const funcMatch = line.match(funcPattern);
+      
+      if (funcMatch && funcMatch[2]) {
+        funcName = funcMatch[2];
+        funcDeclared.add(funcName);
+        inFunction = true;
+        
+        // 检查函数名是否合法（不能是关键字）
+        const keywords = ['int', 'float', 'double', 'char', 'bool', 'void', 'if', 'for', 'while', 'class'];
+        if (keywords.includes(funcName)) {
+          errors.push(`<span class="line-num">第${lineNum}行</span>：函数名 ${funcName} 不能为关键字`);
+        }
+      }
+
+      // 检查main函数
+      if (line.includes('main') && !line.includes('int main(')) {
+        warnings.push(`<span class="line-num">第${lineNum}行</span>：main函数应为 int main() 格式`);
+      }
+    }
+
+    // 全局校验（括号未闭合、注释未闭合等）
+    function checkGlobalIssues(errors) {
+      // 花括号未闭合
+      if (braceStack.length > 0) {
+        const firstUnclosed = braceStack[0];
+        errors.push(`<span class="line-num">全局</span>：左花括号 { 未闭合（起始位置：第${firstUnclosed.line}行第${firstUnclosed.pos}列）`);
+      }
+
+      // 小括号未闭合
+      if (parenStack.length > 0) {
+        const firstUnclosed = parenStack[0];
+        errors.push(`<span class="line-num">全局</span>：左小括号 ( 未闭合（起始位置：第${firstUnclosed.line}行第${firstUnclosed.pos}列）`);
+      }
+
+      // 中括号未闭合
+      if (bracketStack.length > 0) {
+        const firstUnclosed = bracketStack[0];
+        errors.push(`<span class="line-num">全局</span>：左中括号 [ 未闭合（起始位置：第${firstUnclosed.line}行第${firstUnclosed.pos}列）`);
+      }
+    }
+
+    // 复杂代码判断
+    function checkComplexCode(code, lineCount) {
+      const complexKeywords = [
+        'template', 'inheritance', 'polymorphism', 'virtual', 'override',
+        'public:', 'private:', 'protected:', 'namespace', 'friend',
+        'template', 'typename', 'typedef', 'union', 'enum class'
+      ];
+
+      // 行数超过30行 或 包含复杂关键字 → 判定为复杂代码
+      if (lineCount > 30) return true;
+      for (const kw of complexKeywords) {
+        if (code.includes(kw)) return true;
+      }
+      return false;
     }
   </script>
 </body>
