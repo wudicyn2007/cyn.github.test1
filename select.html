@@ -21,6 +21,23 @@
             justify-content: center;
             padding: 20px;
         }
+        /* 新增：返回按钮样式 */
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            padding: 10px 24px;
+            background: #38bdf8;
+            color: #0f172a;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #1fb0f5;
+            transform: translateY(-2px);
+        }
         .title {
             font-size: 32px;
             margin-bottom: 50px;
@@ -60,20 +77,34 @@
         .blue { border-left: 6px solid #38bdf8; }
         .purple { border-left: 6px solid #a78bfa; }
         .green { border-left: 6px solid #34d399; }
+
+        /* 适配手机，按钮不遮挡 */
+        @media (max-width: 768px) {
+            .back-btn {
+                position: static;
+                margin-bottom: 30px;
+            }
+            body {
+                padding-top: 40px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- 新增：返回欢迎页按钮 -->
+    <a href="index.html" class="back-btn">← 返回欢迎界面</a>
+
     <h2 class="title">请选择学习系统</h2>
 
     <div class="card-box">
-       <div class="card blue" onclick="window.location.href='asm_checker.html'">
+        <div class="card blue" onclick="window.location.href='asm_checker.html'">
             <h3>汇编语言语法检测</h3>
             <p>语法校验 | 学习辅助</p>
         </div>
 
         <div class="card purple" onclick="window.location.href='computer_structure.html'">
-    <h3>计算机系统逻辑结构</h3>
-    <p>结构学习 | 原理讲解</p>
+            <h3>计算机系统逻辑结构</h3>
+            <p>结构学习 | 原理讲解</p>
         </div>
 
         <div class="card green" onclick="window.location.href='ai_history.html'">
