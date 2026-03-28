@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习系统选择</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .title {
+            font-size: 32px;
+            margin-bottom: 50px;
+            color: #38bdf8;
+            text-align: center;
+        }
+        .card-box {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1100px;
+        }
+        .card {
+            width: 300px;
+            padding: 40px 25px;
+            background: #1e293b;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            background: #273449;
+        }
+        .card h3 {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .card p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        .blue { border-left: 6px solid #38bdf8; }
+        .purple { border-left: 6px solid #a78bfa; }
+        .green { border-left: 6px solid #34d399; }
+    </style>
+</head>
+<body>
+    <h2 class="title">请选择学习系统</h2>
+
+    <div class="card-box">
+        <div class="card blue" onclick="alert('即将打开：汇编语言语法检测')">
+            <h3>汇编语言语法检测</h3>
+            <p>语法校验 | 学习辅助</p>
+        </div>
+
+        <div class="card purple" onclick="alert('即将打开：计算机系统逻辑结构')">
+            <h3>计算机系统逻辑结构</h3>
+            <p>结构学习 | 原理讲解</p>
+        </div>
+
+        <div class="card green" onclick="alert('即将打开：人工智能发展史')">
+            <h3>人工智能发展史</h3>
+            <p>知识学习 | 发展历程</p>
+        </div>
+    </div>
+</body>
+</html>
