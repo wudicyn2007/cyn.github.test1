@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汇编语言语法检测</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
+.container{max-width:1000px;margin:0 auto}
+.back{display:inline-block;padding:10px 20px;background:#38bdf8;color:#111;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
+.box{background:#1e293b;border-radius:16px;padding:24px;margin-bottom:20px}
+h1{color:#38bdf8;margin-bottom:10px}
+h2{color:#a78bfa;margin:16px 0 10px;font-size:18px}
+.editor{width:100%;height:220px;background:#0f172a;color:#fff;border:1px solid #333;border-radius:8px;padding:12px;font-size:15px;resize:vertical}
+.btn{padding:12px 24px;background:#38bdf8;color:#111;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:10px}
+.result{margin-top:16px;padding:12px;border-radius:8px;background:#1a2435}
+.ok{color:#34d399}
+.err{color:#f87171}
+.rule{line-height:1.6;color:#cbd5e1}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<a href="select.html" class="back">← 返回选择</a>
+
+<div class="box">
+  <h1>汇编语言语法检测</h1>
+  <p>支持 8086 汇编基础指令、寄存器、段、END 检查</p>
+</div>
+
+<div class="box">
+  <h2>✍️ 请输入汇编代码</h2>
+  <textarea id="code" class="editor" placeholder="例如：
+MOV AX, 10
+ADD BX, AX
+END START"></textarea>
+  <button class="btn" onclick="checkAsm()">🔍 开始语法检测</button>
+  <div id="result" class="result"></div>
+</div>
+
+<div class="box">
+  <h2>📘 汇编简要语法（快速参考）</h2>
+  <div class="rule">
+    1. 指令格式：<strong>指令 操作数1, 操作数2</strong><br>
+    2. 常用寄存器：AX BX CX DX SI DI SP BP<br>
+    3. 段定义：CODE SEGMENT / CODE ENDS<br>
+    4. 注释以 ; 开头<br>
+    5. 程序必须以 END 结束
+  </div>
+</div>
+
+</div>
+
+<script>
+function checkAsm() {
+  const code = document.getElementById('code').value.trim()
+  const res = document.getElementById('result')
+
+  if (!code) {
+    res.innerHTML = '<div class="err">⚠️ 代码不能为空，请输入汇编指令</div>'
+    return
+  }
+
+  const lines = code.split('\n').map(l => l.trim().toUpperCase())
+  const err = []
+  const ok = []
+
+  // 指令集合
+  const ins = ['MOV','ADD','SUB','PUSH','POP','JMP','JC','JZ','CALL','RET','INT','MOVSX','MOVZX']
+  // 寄存器
+  const reg = ['AX','BX','CX','DX','SI','DI','BP','SP','CS','DS','SS','ES']
+
+  // 逐行检查
+  lines.forEach((line, idx) => {
+    if (!line || line.startsWith(';')) return
+
+    // 检查 END
+    if (line.startsWith('END')) {
+      ok.push(`第${idx+1}行：END 正确`)
+      return
+    }
+
+    // 段
+    if (line.includes('SEGMENT') || line.includes('ENDS')) {
+      ok.push(`第${idx+1}行：段定义语法正确`)
+      return
+    }
+
+    const words = line.replace(/[,;]/g, ' ').split(/\s+/).filter(x => x)
+    if (words.length === 0) return
+
+    // 检查指令
+    if (!ins.includes(words[0])) {
+      err.push(`第${idx+1}行：未知指令「${words[0]}」`)
+    } else {
+      ok.push(`第${idx+1}行：指令「${words[0]}」合法`)
+    }
+
+    // 检查操作数是否是寄存器
+    words.slice(1).forEach(w => {
+      if (!reg.includes(w) && !/^\d+$/.test(w)) {
+        err.push(`第${idx+1}行：疑似非法操作数「${w}」`)
+      }
+    })
+  })
+
+  // 输出结果
+  let html = ''
+  if (ok.length > 0) html += '<div class="ok">' + ok.join('<br>') + '</div><br>'
+  if (err.length > 0) html += '<div class="err">' + err.join('<br>') + '</div>'
+  else html += '<div class="ok">✅ 未发现语法错误！</div>'
+
+  res.innerHTML = html
+}
+</script>
+</body>
+</html>
