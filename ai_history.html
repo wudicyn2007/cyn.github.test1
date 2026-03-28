@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人工智能发展史</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            padding: 2rem;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 2rem;
+            padding: 0.8rem 2rem;
+            background: #38bdf8;
+            color: #0f172a;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #1fb0f5;
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #a78bfa;
+            margin: 2.5rem 0 1rem;
+            border-left: 5px solid #a78bfa;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: #34d399;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        p {
+            color: #cbd5e1;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(#38bdf8, #a78bfa);
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.4rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #38bdf8;
+            border: 3px solid #1e293b;
+        }
+
+        .math-section {
+            background: rgba(52, 211, 153, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 5px solid #34d399;
+        }
+
+        .math-section h2 {
+            border-left: none;
+            padding-left: 0;
+            color: #34d399;
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="select.html" class="back-btn">← 返回选择界面</a>
+
+        <h1>人工智能发展史</h1>
+        <p class="subtitle">从理论萌芽到智能时代，AI的百年演进之路</p>
+
+        <h2>一、AI的起源与理论奠基（1900-1956）</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <h3>1936年：图灵机的诞生</h3>
+                <p>阿兰·图灵提出「图灵机」模型，从数学上定义了「可计算性」，为计算机和AI奠定了理论基础，回答了「机器能否思考」的核心问题。</p>
+            </div>
+            <div class="timeline-item">
+                <h3>1943年：神经元模型</h3>
+                <p>麦卡洛克与皮茨提出首个人工神经元数学模型，证明神经元可实现逻辑运算，开启了神经网络研究的先河。</p>
+            </div>
+            <div class="timeline-item">
+                <h3>1956年：达特茅斯会议</h3>
+                <p>约翰·麦卡锡等科学家召开达特茅斯会议，正式提出「人工智能（Artificial Intelligence）」概念，标志着AI学科的诞生。</p>
+            </div>
+        </div>
+
+        <h2>二、AI的黄金时代与寒冬（1956-2000）</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <h3>1956-1974：第一次黄金期</h3>
+                <p>早期AI取得突破性进展：逻辑理论家程序证明数学定理、ELIZA实现人机对话，政府投入大量资金，AI被寄予厚望。</p>
+            </div>
+            <div class="timeline-item">
+                <h3>1974-1980：第一次AI寒冬</h3>
+                <p>受限于算力和算法，AI无法解决复杂问题，资金大幅削减，研究陷入低谷。</p>
+            </div>
+            <div class="timeline-item">
+                <h3>1980-1987：专家系统热潮</h3>
+                <p>基于规则的专家系统在商业领域应用，日本「第五代计算机」计划推动AI复苏，迎来第二次黄金期。</p>
+            </div>
+            <div class="timeline-item">
+                <h3>1987-2000：第二次AI寒冬</h3>
+                <p>专家系统维护成本高、泛化能力差，再次遭遇资金撤资，AI研究转向机器学习等基础方向。</p>
+            </div>
+        </div>
+
+        <h2>三、深度学习与AI爆发（2000-至今）</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <h3>2012年：AlexNet的突破</h3>
+                <p>AlexNet在图像识别大赛中以绝对优势夺冠，证明了深度学习的强大能力，开启了深度学习时代。</p>
+            </div>
+            <div class="timeline-item">
+                <h3>2017年：Transformer架构诞生</h3>
+                <p>Google提出Transformer模型，凭借注意力机制彻底改变了自然语言处理，为大语言模型奠定了核心架构。</p>
+            </div>
+            <div class="timeline-item">
+                <h3>2022年：ChatGPT问世</h3>
+                <p>OpenAI推出ChatGPT，实现了通用对话能力的突破，AI正式进入大众视野，开启生成式AI时代。</p>
+            </div>
+        </div>
+
+        <div class="math-section">
+            <h2>📐 近现代数学发展史（AI的理论基石）</h2>
+            <p>AI的每一次突破，都离不开数学理论的支撑。近现代数学的核心进展，为AI提供了底层逻辑：</p>
+            <h3>19世纪末-20世纪初：数理逻辑与集合论</h3>
+            <p>康托尔创立集合论，弗雷格、罗素建立数理逻辑体系，为AI的逻辑推理提供了数学基础。</p>
+            <h3>20世纪中：概率论与统计学</h3>
+            <p>贝叶斯理论、统计学习理论的发展，让AI从「规则驱动」转向「数据驱动」，成为机器学习的核心方法。</p>
+            <h3>20世纪末-21世纪初：线性代数与优化理论</h3>
+            <p>矩阵运算、梯度下降等优化算法的成熟，让大规模神经网络的训练成为可能，直接推动了深度学习的爆发。</p>
+        </div>
+
+        <p style="text-align: center; margin-top: 3rem; color: #94a3b8;">
+            数学是AI的骨架，算法是AI的灵魂，两者共同推动着智能时代的到来
+        </p>
+    </div>
+</body>
+</html>
