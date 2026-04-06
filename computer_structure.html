@@ -7,7 +7,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
 body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
-.container{max-width:1200px;margin:0 auto}
+.container{max-width:1400px;margin:0 auto}
 .back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
 h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 
@@ -18,16 +18,18 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 .tab-content{display:none;background:#1e293b;border-radius:16px;padding:24px}
 .tab-content.active{display:block}
 
-.timeline-container{position:relative;width:100%;height:650px;background:#0f172a;border-radius:12px;overflow:hidden}
+.timeline-container{position:relative;width:100%;height:700px;background:#0f172a;border-radius:12px;overflow:hidden}
 .svg-wrapper{width:100%;height:100%}
 
 .node{fill:#1e293b;stroke:#38bdf8;stroke-width:2;rx:12;ry:12;cursor:move}
 .node-text{fill:#fff;font-size:12px;text-anchor:middle}
+.node-sub{fill:#cbd5e1;font-size:10px;text-anchor:middle}
 .edge{stroke:#64748b;stroke-width:1.5;fill:none}
 
-.knowledge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.knowledge-card{background:#0f172a;border-radius:10px;padding:12px;border-left:3px solid #38bdf8}
-.knowledge-card h3{font-size:14px;color:#fff;margin-bottom:6px}
+.knowledge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px}
+.knowledge-card{background:#0f172a;border-radius:10px;padding:14px;border-left:3px solid #38bdf8}
+.knowledge-card h3{font-size:15px;color:#fff;margin-bottom:8px}
+.knowledge-card p{font-size:12px;color:#94a3b8;margin-bottom:8px}
 .level-bar{height:18px;background:#334155;border-radius:9px;overflow:hidden}
 .level-fill{height:100%;background:#38bdf8;color:#fff;font-size:11px;display:flex;align-items:center;padding-left:8px}
 </style>
@@ -43,15 +45,17 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 <div class="tab active" id="tab-evo">逻辑结构图</div>
 </div>
 
+<!-- 逻辑结构图标签页 -->
 <div class="tab-content active" id="evolution-tab">
 <div class="timeline-container">
-<svg class="svg-wrapper" viewBox="0 0 1000 650">
+<svg class="svg-wrapper" viewBox="0 0 1200 700">
 <defs>
 <marker id="arrow" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
 <polygon points="0 0,8 2.5,0 5" fill="#64748b"/>
 </marker>
 </defs>
 
+<!-- 连线容器 -->
 <g id="edges">
 <line class="edge" id="e1" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
 <line class="edge" id="e2" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
@@ -63,61 +67,128 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 <line class="edge" id="e8" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
 <line class="edge" id="e9" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
 <line class="edge" id="e10" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e11" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e12" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e13" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e14" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e15" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e16" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e17" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e18" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
 </g>
 
+<!-- 节点容器：左右完全分区域，左硬件、右软件，100%无遮挡 -->
 <g id="nodes">
 
-<!-- 核心节点（放大） -->
-<g class="draggable" data-id="n1" transform="translate(500,100)">
-<rect class="node" width="120" height="50" x="-60" y="-25"/>
+<!-- 根节点：计算机系统（放大） -->
+<g class="draggable" data-id="n0" transform="translate(600,80)">
+<rect class="node" width="140" height="55" x="-70" y="-27"/>
 <text class="node-text" x="0" y="5">计算机系统</text>
 </g>
 
-<g class="draggable" data-id="n2" transform="translate(300,220)">
-<rect class="node" width="100" height="45" x="-50" y="-22"/>
+<!-- ============== 左半区：硬件系统（x<500，和右半区完全隔离） ============== -->
+<g class="draggable" data-id="n1" transform="translate(300,180)">
+<rect class="node" width="110" height="48" x="-55" y="-24"/>
 <text class="node-text" x="0" y="5">硬件系统</text>
 </g>
 
-<g class="draggable" data-id="n3" transform="translate(700,220)">
+<!-- 硬件一级子节点 -->
+<g class="draggable" data-id="n2" transform="translate(150,300)">
 <rect class="node" width="100" height="45" x="-50" y="-22"/>
-<text class="node-text" x="0" y="5">软件系统</text>
+<text class="node-text" x="0" y="5">中央处理器</text>
+<text class="node-sub" x="0" y="20">CPU</text>
 </g>
 
-<!-- 硬件子节点（无遮挡） -->
-<g class="draggable" data-id="n4" transform="translate(150,350)">
-<rect class="node" width="90" height="40" x="-45" y="-20"/>
-<text class="node-text" x="0" y="5">运算器</text>
-</g>
-
-<g class="draggable" data-id="n5" transform="translate(270,350)">
-<rect class="node" width="90" height="40" x="-45" y="-20"/>
-<text class="node-text" x="0" y="5">控制器</text>
-</g>
-
-<g class="draggable" data-id="n6" transform="translate(390,350)">
-<rect class="node" width="90" height="40" x="-45" y="-20"/>
+<g class="draggable" data-id="n3" transform="translate(300,300)">
+<rect class="node" width="100" height="45" x="-50" y="-22"/>
 <text class="node-text" x="0" y="5">存储器</text>
 </g>
 
-<g class="draggable" data-id="n7" transform="translate(510,350)">
+<g class="draggable" data-id="n4" transform="translate(450,300)">
+<rect class="node" width="100" height="45" x="-50" y="-22"/>
+<text class="node-text" x="0" y="5">IO设备</text>
+<text class="node-sub" x="0" y="20">输入/输出</text>
+</g>
+
+<!-- CPU二级子节点 -->
+<g class="draggable" data-id="n5" transform="translate(100,420)">
+<rect class="node" width="90" height="40" x="-45" y="-20"/>
+<text class="node-text" x="0" y="5">运算器</text>
+<text class="node-sub" x="0" y="20">ALU</text>
+</g>
+
+<g class="draggable" data-id="n6" transform="translate(200,420)">
+<rect class="node" width="90" height="40" x="-45" y="-20"/>
+<text class="node-text" x="0" y="5">控制器</text>
+<text class="node-sub" x="0" y="20">CU</text>
+</g>
+
+<!-- 存储器二级子节点 -->
+<g class="draggable" data-id="n7" transform="translate(250,420)">
+<rect class="node" width="90" height="40" x="-45" y="-20"/>
+<text class="node-text" x="0" y="5">主存储器</text>
+<text class="node-sub" x="0" y="20">内存</text>
+</g>
+
+<g class="draggable" data-id="n8" transform="translate(350,420)">
+<rect class="node" width="90" height="40" x="-45" y="-20"/>
+<text class="node-text" x="0" y="5">辅助存储器</text>
+<text class="node-sub" x="0" y="20">外存</text>
+</g>
+
+<!-- IO设备二级子节点 -->
+<g class="draggable" data-id="n9" transform="translate(400,420)">
 <rect class="node" width="90" height="40" x="-45" y="-20"/>
 <text class="node-text" x="0" y="5">输入设备</text>
 </g>
 
-<g class="draggable" data-id="n8" transform="translate(630,350)">
+<g class="draggable" data-id="n10" transform="translate(500,420)">
 <rect class="node" width="90" height="40" x="-45" y="-20"/>
 <text class="node-text" x="0" y="5">输出设备</text>
 </g>
 
-<!-- 软件子节点（无遮挡） -->
-<g class="draggable" data-id="n9" transform="translate(650,350)">
-<rect class="node" width="100" height="45" x="-50" y="-22"/>
+<!-- ============== 右半区：软件系统（x>700，和左半区完全隔离，无重叠） ============== -->
+<g class="draggable" data-id="n11" transform="translate(900,180)">
+<rect class="node" width="110" height="48" x="-55" y="-24"/>
+<text class="node-text" x="0" y="5">软件系统</text>
+</g>
+
+<!-- 软件一级子节点 -->
+<g class="draggable" data-id="n12" transform="translate(750,300)">
+<rect class="node" width="110" height="45" x="-55" y="-22"/>
 <text class="node-text" x="0" y="5">系统软件</text>
 </g>
 
-<g class="draggable" data-id="n10" transform="translate(800,350)">
-<rect class="node" width="100" height="45" x="-50" y="-22"/>
+<g class="draggable" data-id="n13" transform="translate(900,300)">
+<rect class="node" width="110" height="45" x="-55" y="-22"/>
+<text class="node-text" x="0" y="5">支撑软件</text>
+</g>
+
+<g class="draggable" data-id="n14" transform="translate(1050,300)">
+<rect class="node" width="110" height="45" x="-55" y="-22"/>
 <text class="node-text" x="0" y="5">应用软件</text>
+</g>
+
+<!-- 系统软件二级子节点 -->
+<g class="draggable" data-id="n15" transform="translate(700,420)">
+<rect class="node" width="100" height="40" x="-50" y="-20"/>
+<text class="node-text" x="0" y="5">操作系统</text>
+</g>
+
+<g class="draggable" data-id="n16" transform="translate(800,420)">
+<rect class="node" width="100" height="40" x="-50" y="-20"/>
+<text class="node-text" x="0" y="5">语言处理程序</text>
+</g>
+
+<!-- 支撑软件二级子节点 -->
+<g class="draggable" data-id="n17" transform="translate(900,420)">
+<rect class="node" width="100" height="40" x="-50" y="-20"/>
+<text class="node-text" x="0" y="5">数据库管理系统</text>
+</g>
+
+<g class="draggable" data-id="n18" transform="translate(1000,420)">
+<rect class="node" width="100" height="40" x="-50" y="-20"/>
+<text class="node-text" x="0" y="5">开发工具与中间件</text>
 </g>
 
 </g>
@@ -125,19 +196,63 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 </div>
 </div>
 
+<!-- 知识图谱标签页（内容同步升级） -->
 <div class="tab-content" id="knowledge-tab">
 <div class="knowledge-grid">
 
-<div class="knowledge-card"><h3>计算机系统</h3><div class="level-bar"><div class="level-fill" style="width:100%">核心</div></div></div>
-<div class="knowledge-card"><h3>硬件系统</h3><div class="level-bar"><div class="level-fill" style="width:80%">核心</div></div></div>
-<div class="knowledge-card"><h3>软件系统</h3><div class="level-bar"><div class="level-fill" style="width:80%">核心</div></div></div>
-<div class="knowledge-card"><h3>运算器</h3><div class="level-bar"><div class="level-fill" style="width:60%">重要</div></div></div>
-<div class="knowledge-card"><h3>控制器</h3><div class="level-bar"><div class="level-fill" style="width:60%">重要</div></div></div>
-<div class="knowledge-card"><h3>存储器</h3><div class="level-bar"><div class="level-fill" style="width:60%">重要</div></div></div>
-<div class="knowledge-card"><h3>输入设备</h3><div class="level-bar"><div class="level-fill" style="width:40%">基础</div></div></div>
-<div class="knowledge-card"><h3>输出设备</h3><div class="level-bar"><div class="level-fill" style="width:40%">基础</div></div></div>
-<div class="knowledge-card"><h3>系统软件</h3><div class="level-bar"><div class="level-fill" style="width:60%">重要</div></div></div>
-<div class="knowledge-card"><h3>应用软件</h3><div class="level-bar"><div class="level-fill" style="width:40%">基础</div></div></div>
+<div class="knowledge-card">
+<h3>中央处理器CPU</h3>
+<p>运算器+控制器，计算机的运算和控制核心</p>
+<div class="level-bar"><div class="level-fill" style="width:100%">核心</div></div>
+</div>
+
+<div class="knowledge-card">
+<h3>存储器系统</h3>
+<p>主存（内存）+辅存（外存），负责数据存储与读写</p>
+<div class="level-bar"><div class="level-fill" style="width:80%">核心</div></div>
+</div>
+
+<div class="knowledge-card">
+<h3>输入输出IO系统</h3>
+<p>实现计算机与外部设备的数据交互</p>
+<div class="level-bar"><div class="level-fill" style="width:60%">重要</div></div>
+</div>
+
+<div class="knowledge-card">
+<h3>操作系统OS</h3>
+<p>管理硬件与软件资源的系统软件，计算机的基石</p>
+<div class="level-bar"><div class="level-fill" style="width:100%">核心</div></div>
+</div>
+
+<div class="knowledge-card">
+<h3>语言处理程序</h3>
+<p>编译、汇编、解释程序，将高级语言转为机器码</p>
+<div class="level-bar"><div class="level-fill" style="width:80%">核心</div></div>
+</div>
+
+<div class="knowledge-card">
+<h3>数据库管理系统DBMS</h3>
+<p>负责数据的统一管理与高效存取</p>
+<div class="level-bar"><div class="level-fill" style="width:60%">重要</div></div>
+</div>
+
+<div class="knowledge-card">
+<h3>冯·诺依曼体系</h3>
+<p>现代计算机的核心架构：存储程序、五大核心部件</p>
+<div class="level-bar"><div class="level-fill" style="width:100%">核心</div></div>
+</div>
+
+<div class="knowledge-card">
+<h3>应用软件</h3>
+<p>为特定应用场景开发的软件，如办公、设计软件</p>
+<div class="level-bar"><div class="level-fill" style="width:40%">基础</div></div>
+</div>
+
+<div class="knowledge-card">
+<h3>中间件</h3>
+<p>位于系统与应用之间的通用服务，解决分布式通信</p>
+<div class="level-bar"><div class="level-fill" style="width:60%">重要</div></div>
+</div>
 
 </div>
 </div>
@@ -145,65 +260,101 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 </div>
 
 <script>
+// 标签页切换
 const tabs = document.querySelectorAll('.tab');
 const contents = document.querySelectorAll('.tab-content');
-tabs[0].onclick = ()=>{show('know')}
-tabs[1].onclick = ()=>{show('evo')}
-function show(t){
+tabs[0].onclick = ()=>{showTab('know')}
+tabs[1].onclick = ()=>{showTab('evo')}
+function showTab(type){
     contents.forEach(c=>c.classList.remove('active'))
     tabs.forEach(t=>t.classList.remove('active'))
-    if(t==='know'){document.getElementById('knowledge-tab').classList.add('active');tabs[0].classList.add('active')}
-    else{document.getElementById('evolution-tab').classList.add('active');tabs[1].classList.add('active')}
+    if(type === 'know'){
+        document.getElementById('knowledge-tab').classList.add('active');
+        tabs[0].classList.add('active');
+    }else{
+        document.getElementById('evolution-tab').classList.add('active');
+        tabs[1].classList.add('active');
+    }
 }
 
-// 完整逻辑连线（所有节点全连接，无遗漏）
+// 完整逻辑连线（层级清晰，无遗漏）
 const connections = [
-  { e:'e1', from:'n1', to:'n2' },
-  { e:'e2', from:'n1', to:'n3' },
-  { e:'e3', from:'n2', to:'n4' },
-  { e:'e4', from:'n2', to:'n5' },
-  { e:'e5', from:'n2', to:'n6' },
-  { e:'e6', from:'n2', to:'n7' },
-  { e:'e7', from:'n2', to:'n8' },
-  { e:'e8', from:'n3', to:'n9' },
-  { e:'e9', from:'n3', to:'n10'},
-  { e:'e10', from:'n9', to:'n10'}
+    // 根节点连线
+    { e:'e1', from:'n0', to:'n1' },
+    { e:'e2', from:'n0', to:'n11' },
+    // 硬件系统连线
+    { e:'e3', from:'n1', to:'n2' },
+    { e:'e4', from:'n1', to:'n3' },
+    { e:'e5', from:'n1', to:'n4' },
+    // CPU子节点连线
+    { e:'e6', from:'n2', to:'n5' },
+    { e:'e7', from:'n2', to:'n6' },
+    // 存储器子节点连线
+    { e:'e8', from:'n3', to:'n7' },
+    { e:'e9', from:'n3', to:'n8' },
+    // IO子节点连线
+    { e:'e10', from:'n4', to:'n9' },
+    { e:'e11', from:'n4', to:'n10' },
+    // 软件系统连线
+    { e:'e12', from:'n11', to:'n12' },
+    { e:'e13', from:'n11', to:'n13' },
+    { e:'e14', from:'n11', to:'n14' },
+    // 系统软件子节点连线
+    { e:'e15', from:'n12', to:'n15' },
+    { e:'e16', from:'n12', to:'n16' },
+    // 支撑软件子节点连线
+    { e:'e17', from:'n13', to:'n17' },
+    { e:'e18', from:'n13', to:'n18' },
 ];
 
+// 更新连线位置（拖动时自动触发）
 function updateEdges() {
-  connections.forEach(c => {
-    const from = document.querySelector(`[data-id="${c.from}"]`);
-    const to = document.querySelector(`[data-id="${c.to}"]`);
-    const edge = document.getElementById(c.e);
-    if (!from || !to || !edge) return;
-    const mf = from.transform.baseVal[0].matrix;
-    const mt = to.transform.baseVal[0].matrix;
-    edge.setAttribute('x1', mf.e);
-    edge.setAttribute('y1', mf.f);
-    edge.setAttribute('x2', mt.e);
-    edge.setAttribute('y2', mt.f);
-  });
+    connections.forEach(item => {
+        const fromNode = document.querySelector(`[data-id="${item.from}"]`);
+        const toNode = document.querySelector(`[data-id="${item.to}"]`);
+        const edgeLine = document.getElementById(item.e);
+        if(!fromNode || !toNode || !edgeLine) return;
+
+        const fromMatrix = fromNode.transform.baseVal[0].matrix;
+        const toMatrix = toNode.transform.baseVal[0].matrix;
+
+        edgeLine.setAttribute('x1', fromMatrix.e);
+        edgeLine.setAttribute('y1', fromMatrix.f);
+        edgeLine.setAttribute('x2', toMatrix.e);
+        edgeLine.setAttribute('y2', toMatrix.f);
+    });
 }
 
-let drag = null, dx=0, dy=0;
-document.querySelectorAll('.draggable').forEach(g=>{
-  g.onmousedown = e=>{
-    drag = g;
-    const t = g.transform.baseVal[0].matrix;
-    dx = e.clientX - t.e;
-    dy = e.clientY - t.f;
-  }
+// 节点拖动逻辑
+let draggingNode = null;
+let offsetX = 0;
+let offsetY = 0;
+
+// 绑定拖动事件
+document.querySelectorAll('.draggable').forEach(node => {
+    node.onmousedown = (e) => {
+        draggingNode = node;
+        const matrix = node.transform.baseVal[0].matrix;
+        offsetX = e.clientX - matrix.e;
+        offsetY = e.clientY - matrix.f;
+    }
 });
 
-document.onmousemove = e=>{
-  if(!drag) return;
-  const x = e.clientX - dx;
-  const y = e.clientY - dy;
-  drag.setAttribute('transform',`translate(${x},${y})`);
-  updateEdges();
+// 拖动中更新位置
+document.onmousemove = (e) => {
+    if(!draggingNode) return;
+    const x = e.clientX - offsetX;
+    const y = e.clientY - offsetY;
+    draggingNode.setAttribute('transform', `translate(${x},${y})`);
+    updateEdges();
 }
 
-document.onmouseup = ()=>{drag=null}
+// 结束拖动
+document.onmouseup = () => {
+    draggingNode = null;
+}
+
+// 页面加载完成后初始化连线
 window.onload = updateEdges;
 </script>
 </body>
