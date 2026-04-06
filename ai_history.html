@@ -1,527 +1,219 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>人工智能发展史 - 进化史与知识图谱</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
-        }
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: #fff;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .back-btn {
-            display: inline-block;
-            padding: 10px 24px;
-            background: #38bdf8;
-            color: #0f172a;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            margin-bottom: 20px;
-            transition: 0.3s;
-        }
-        .back-btn:hover {
-            transform: translateY(-2px);
-        }
-        h1 {
-            color: #38bdf8;
-            margin-bottom: 30px;
-            text-align: center;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人工智能发展史 · 进化与知识图谱</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+.back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
+h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 
-        /* 标签页样式 */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-        .tab {
-            padding: 12px 28px;
-            border-radius: 12px;
-            background: #1e293b;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-            border: 2px solid transparent;
-        }
-        .tab.active {
-            background: #3b82f6;
-            border-color: #60a5fa;
-        }
-        .tab:hover {
-            background: #273449;
-        }
+.tabs{display:flex;gap:10px;justify:center;margin-bottom:20px}
+.tab{padding:10px 24px;background:#1e293b;border-radius:10px;cursor:pointer}
+.tab.active{background:#3b82f6}
 
-        /* 内容容器 */
-        .tab-content {
-            display: none;
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 30px;
-            min-height: 70vh;
-        }
-        .tab-content.active {
-            display: block;
-        }
+.tab-content{display:none;background:#1e293b;border-radius:16px;padding:24px}
+.tab-content.active{display:block}
 
-        /* ====================== 进化史（思维导图）样式 ====================== */
-        .timeline-container {
-            position: relative;
-            width: 100%;
-            height: 600px;
-            overflow: auto;
-            background: #0f172a;
-            border-radius: 12px;
-            padding: 20px;
-        }
-        .timeline-svg {
-            width: 100%;
-            height: 100%;
-        }
-        .node {
-            fill: #1e293b;
-            stroke: #38bdf8;
-            stroke-width: 2;
-            rx: 20;
-            ry: 20;
-        }
-        .node-regression { stroke: #a78bfa; }
-        .node-classification { stroke: #3b82f6; }
-        .node-nn { stroke: #ef4444; }
-        .node-clustering { stroke: #34d399; }
-        .node-dimred { stroke: #f59e0b; }
-        .node-rl { stroke: #ec4899; }
-        .node-text {
-            fill: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            text-anchor: middle;
-        }
-        .node-year {
-            fill: #94a3b8;
-            font-size: 12px;
-            text-anchor: middle;
-        }
-        .node-note {
-            fill: #cbd5e1;
-            font-size: 11px;
-            text-anchor: middle;
-        }
-        .edge {
-            stroke: #64748b;
-            stroke-width: 2;
-            fill: none;
-            marker-end: url(#arrowhead);
-        }
-        .legend {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 13px;
-            color: #cbd5e1;
-        }
-        .legend-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
+.timeline-container{position:relative;width:100%;height:650px;background:#0f172a;border-radius:12px;overflow:hidden}
+.svg-wrapper{width:100%;height:100%}
 
-        /* ====================== 知识图谱（右侧列表）样式 ====================== */
-        .knowledge-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 10px;
-        }
-        .knowledge-card {
-            background: #0f172a;
-            border-radius: 12px;
-            padding: 16px;
-            border-left: 4px solid;
-            transition: 0.3s;
-        }
-        .knowledge-card:hover {
-            transform: translateY(-3px);
-            background: #1e293b;
-        }
-        .card-regression { border-color: #a78bfa; }
-        .card-classification { border-color: #3b82f6; }
-        .card-nn { border-color: #ef4444; }
-        .card-clustering { border-color: #34d399; }
-        .card-dimred { border-color: #f59e0b; }
-        .card-rl { border-color: #ec4899; }
-        .knowledge-card h3 {
-            color: #fff;
-            margin-bottom: 8px;
-            font-size: 18px;
-        }
-        .level-bar {
-            height: 24px;
-            background: #334155;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-        .level-fill {
-            height: 100%;
-            background: #64748b;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            padding-left: 10px;
-            color: #fff;
-            font-weight: 600;
-            font-size: 13px;
-        }
-    </style>
+.node{fill:#1e293b;stroke:#38bdf8;stroke-width:2;rx:12;ry:12;cursor:move}
+.node-text{fill:#fff;font-size:12px;text-anchor:middle}
+.node-year{fill:#94a3b8;font-size:10px;text-anchor:middle}
+.edge{stroke:#64748b;stroke-width:1.5;fill:none}
+
+.knowledge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.knowledge-card{background:#0f172a;border-radius:10px;padding:12px;border-left:3px solid #38bdf8}
+.knowledge-card h3{font-size:14px;color:#fff;margin-bottom:6px}
+.level-bar{height:18px;background:#334155;border-radius:9px;overflow:hidden}
+.level-fill{height:100%;background:#38bdf8;color:#fff;font-size:11px;display:flex;align-items:center;padding-left:8px}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <!-- 返回按钮 -->
-        <a href="select.html" class="back-btn">← 返回选择页</a>
-        <h1>人工智能发展史 · 进化与知识图谱</h1>
+<div class="container">
+<a href="select.html" class="back-btn">← 返回选择页</a>
+<h1>人工智能发展史</h1>
 
-        <!-- 标签页切换 -->
-        <div class="tabs">
-            <div class="tab" onclick="switchTab('knowledge')">知识图谱</div>
-            <div class="tab active" onclick="switchTab('evolution')">进化史</div>
-        </div>
+<div class="tabs">
+<div class="tab" id="tab-know">知识图谱</div>
+<div class="tab active" id="tab-evo">进化史</div>
+</div>
 
-        <!-- ====================== 1. 进化史（思维导图）标签页 ====================== -->
-        <div class="tab-content active" id="evolution-tab">
-            <div class="timeline-container">
-                <!-- 图例 -->
-                <div class="legend">
-                    <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>回归</div>
-                    <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>分类</div>
-                    <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>神经网络</div>
-                    <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>聚类</div>
-                    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>降维</div>
-                    <div class="legend-item"><div class="legend-dot" style="background:#ec4899"></div>强化学习</div>
-                </div>
+<div class="tab-content active" id="evolution-tab">
+<div class="timeline-container">
+<svg class="svg-wrapper" viewBox="0 0 1000 650">
+<g id="nodes">
 
-                <!-- SVG 思维导图 -->
-                <svg class="timeline-svg" viewBox="0 0 1200 600">
-                    <defs>
-                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
-                        </marker>
-                    </defs>
+<g class="draggable" transform="translate(150,100)">
+<rect class="node" width="90" height="40" x="-45" y="-20"/>
+<text class="node-text" x="0" y="5">线性回归</text>
+<text class="node-year" x="0" y="-10">1805</text>
+</g>
 
-                    <!-- ====================== 回归分支（紫色） ====================== -->
-                    <!-- 节点1: 线性回归 1805 -->
-                    <circle class="node node-regression" cx="120" cy="100" r="25"/>
-                    <text class="node-text" x="120" y="105">线性回归</text>
-                    <text class="node-year" x="120" y="80">1805</text>
-                    <text class="node-note" x="120" y="135">需要特征选择</text>
+<g class="draggable" transform="translate(280,80)">
+<rect class="node" width="100" height="40" x="-50" y="-20"/>
+<text class="node-text" x="0" y="5">多项式回归</text>
+<text class="node-year" x="0" y="-10">1815</text>
+</g>
 
-                    <!-- 节点2: 多项式回归 1815 -->
-                    <circle class="node node-regression" cx="200" cy="50" r="25"/>
-                    <text class="node-text" x="200" y="55">多项式回归</text>
-                    <text class="node-year" x="200" y="30">1815</text>
-                    <text class="node-note" x="200" y="85">线性回归只能拟合直线</text>
-                    <path class="edge" d="M 145 90 Q 160 70 175 60"/>
+<g class="draggable" transform="translate(280,150)">
+<rect class="node" width="70" height="40" x="-35" y="-20"/>
+<text class="node-text" x="0" y="5">Ridge</text>
+<text class="node-year" x="0" y="-10">1970</text>
+</g>
 
-                    <!-- 节点3: Ridge回归 1970 -->
-                    <circle class="node node-regression" cx="220" cy="150" r="25"/>
-                    <text class="node-text" x="220" y="155">Ridge回归</text>
-                    <text class="node-year" x="220" y="125">1970</text>
-                    <text class="node-note" x="220" y="185">容易过拟合</text>
-                    <path class="edge" d="M 145 100 Q 180 120 195 140"/>
+<g class="draggable" transform="translate(150,180)">
+<rect class="node" width="70" height="40" x="-35" y="-20"/>
+<text class="node-text" x="0" y="5">Lasso</text>
+<text class="node-year" x="0" y="-10">1996</text>
+</g>
 
-                    <!-- 节点4: Lasso回归 1996 -->
-                    <circle class="node node-regression" cx="180" cy="220" r="25"/>
-                    <text class="node-text" x="180" y="225">Lasso回归</text>
-                    <text class="node-year" x="180" y="195">1996</text>
-                    <text class="node-note" x="180" y="255">需要特征选择</text>
-                    <path class="edge" d="M 200 160 Q 190 190 180 200"/>
+<g class="draggable" transform="translate(420,100)">
+<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<text class="node-text" x="0" y="5">KNN</text>
+<text class="node-year" x="0" y="-10">1951</text>
+</g>
 
-                    <!-- ====================== 分类分支（蓝色） ====================== -->
-                    <!-- 节点1: K近邻 1951 -->
-                    <circle class="node node-classification" cx="350" cy="120" r="25"/>
-                    <text class="node-text" x="350" y="125">K近邻</text>
-                    <text class="node-year" x="350" y="95">1951</text>
-                    <text class="node-note" x="350" y="155">KNN计算量大</text>
-                    <path class="edge" d="M 245 150 Q 300 135 325 125"/>
+<g class="draggable" transform="translate(530,100)">
+<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<text class="node-text" x="0" y="5">SVM</text>
+<text class="node-year" x="0" y="-10">1995</text>
+</g>
 
-                    <!-- 节点2: SVM 1995 -->
-                    <circle class="node node-classification" cx="420" cy="120" r="25"/>
-                    <text class="node-text" x="420" y="125">SVM</text>
-                    <text class="node-year" x="420" y="95">1995</text>
-                    <text class="node-note" x="420" y="155">要最大间隔分隔</text>
-                    <path class="edge" d="M 375 120 L 395 120"/>
+<g class="draggable" transform="translate(420,200)">
+<rect class="node" width="80" height="40" x="-40" y="-20"/>
+<text class="node-text" x="0" y="5">逻辑回归</text>
+<text class="node-year" x="0" y="-10">1958</text>
+</g>
 
-                    <!-- 节点3: 逻辑回归 1958 -->
-                    <circle class="node node-classification" cx="490" cy="120" r="25"/>
-                    <text class="node-text" x="490" y="125">逻辑回归</text>
-                    <text class="node-year" x="490" y="95">1958</text>
-                    <text class="node-note" x="490" y="155">最大化分类间隔，技巧处理非线性</text>
-                    <path class="edge" d="M 445 120 L 465 120"/>
+<g class="draggable" transform="translate(530,200)">
+<rect class="node" width="80" height="40" x="-40" y="-20"/>
+<text class="node-text" x="0" y="5">决策树</text>
+<text class="node-year" x="0" y="-10">1986</text>
+</g>
 
-                    <!-- 节点4: 决策树 1986 -->
-                    <circle class="node node-classification" cx="560" cy="120" r="25"/>
-                    <text class="node-text" x="560" y="125">决策树</text>
-                    <text class="node-year" x="560" y="95">1986</text>
-                    <text class="node-note" x="560" y="155">棵树容易过拟合</text>
-                    <path class="edge" d="M 515 120 L 535 120"/>
+<g class="draggable" transform="translate(150,300)">
+<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<text class="node-text" x="0" y="5">CNN</text>
+<text class="node-year" x="0" y="-10">1998</text>
+</g>
 
-                    <!-- 节点5: 随机森林 2001 -->
-                    <circle class="node node-classification" cx="630" cy="120" r="25"/>
-                    <text class="node-text" x="630" y="125">随机森林</text>
-                    <text class="node-year" x="630" y="95">2001</text>
-                    <path class="edge" d="M 585 120 L 605 120"/>
+<g class="draggable" transform="translate(280,300)">
+<rect class="node" width="80" height="40" x="-40" y="-20"/>
+<text class="node-text" x="0" y="5">神经网络</text>
+<text class="node-year" x="0" y="-10">1986</text>
+</g>
 
-                    <!-- 朴素贝叶斯 1960 -->
-                    <circle class="node node-classification" cx="630" cy="220" r="25"/>
-                    <text class="node-text" x="630" y="225">朴素贝叶斯</text>
-                    <text class="node-year" x="630" y="195">1960</text>
+<g class="draggable" transform="translate(420,300)">
+<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<text class="node-text" x="0" y="5">RNN</text>
+<text class="node-year" x="0" y="-10">1986</text>
+</g>
 
-                    <!-- ====================== 神经网络分支（红色） ====================== -->
-                    <!-- 节点1: CNN 1998 -->
-                    <circle class="node node-nn" cx="120" cy="320" r="25"/>
-                    <text class="node-text" x="120" y="325">CNN</text>
-                    <text class="node-year" x="120" y="295">1998</text>
-                    <text class="node-note" x="120" y="355">需要处理图像空间结构</text>
+<g class="draggable" transform="translate(550,300)">
+<rect class="node" width="80" height="40" x="-40" y="-20"/>
+<text class="node-text" x="0" y="5">Attention</text>
+<text class="node-year" x="0" y="-10">2014</text>
+</g>
 
-                    <!-- 节点2: 神经网络 1986 -->
-                    <circle class="node node-nn" cx="220" cy="320" r="25"/>
-                    <text class="node-text" x="220" y="325">神经网络</text>
-                    <text class="node-year" x="220" y="295">1986</text>
-                    <text class="node-note" x="220" y="355">需要处理序列数据</text>
-                    <path class="edge" d="M 145 320 L 195 320"/>
+<g class="draggable" transform="translate(180,420)">
+<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<text class="node-text" x="0" y="5">PCA</text>
+<text class="node-year" x="0" y="-10">1901</text>
+</g>
 
-                    <!-- 节点3: RNN 1986 -->
-                    <circle class="node node-nn" cx="350" cy="320" r="25"/>
-                    <text class="node-text" x="350" y="325">RNN</text>
-                    <text class="node-year" x="350" y="295">1986</text>
-                    <text class="node-note" x="350" y="355">RNN长序列梯度消失</text>
-                    <path class="edge" d="M 245 320 L 325 320"/>
+<g class="draggable" transform="translate(320,420)">
+<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<text class="node-text" x="0" y="5">LDA</text>
+<text class="node-year" x="0" y="-10">1936</text>
+</g>
 
-                    <!-- 节点4: Attention 2014 -->
-                    <circle class="node node-nn" cx="500" cy="320" r="25"/>
-                    <text class="node-text" x="500" y="325">Attention</text>
-                    <text class="node-year" x="500" y="295">2014</text>
-                    <path class="edge" d="M 375 320 L 475 320"/>
+<g class="draggable" transform="translate(450,420)">
+<rect class="node" width="70" height="40" x="-35" y="-20"/>
+<text class="node-text" x="0" y="5">t-SNE</text>
+<text class="node-year" x="0" y="-10">2008</text>
+</g>
 
-                    <!-- ====================== 降维分支（橙色） ====================== -->
-                    <!-- 节点1: LDA 1936 -->
-                    <circle class="node node-dimred" cx="150" cy="450" r="25"/>
-                    <text class="node-text" x="150" y="455">LDA</text>
-                    <text class="node-year" x="150" y="425">1936</text>
-                    <text class="node-note" x="150" y="485">需要利用标签信息</text>
+<g class="draggable" transform="translate(180,520)">
+<rect class="node" width="90" height="40" x="-45" y="-20"/>
+<text class="node-text" x="0" y="5">K-Means</text>
+<text class="node-year" x="0" y="-10">1957</text>
+</g>
 
-                    <!-- 节点2: PCA 1901 -->
-                    <circle class="node node-dimred" cx="300" cy="450" r="25"/>
-                    <text class="node-text" x="300" y="455">PCA</text>
-                    <text class="node-year" x="300" y="425">1901</text>
-                    <path class="edge" d="M 175 450 Q 230 450 275 450"/>
+<g class="draggable" transform="translate(330,520)">
+<rect class="node" width="80" height="40" x="-40" y="-20"/>
+<text class="node-text" x="0" y="5">DBSCAN</text>
+<text class="node-year" x="0" y="-10">1996</text>
+</g>
 
-                    <!-- 节点3: t-SNE 2008 -->
-                    <circle class="node node-dimred" cx="450" cy="450" r="25"/>
-                    <text class="node-text" x="450" y="455">t-SNE</text>
-                    <text class="node-year" x="450" y="425">2008</text>
-                    <text class="node-note" x="450" y="485">PCA是线性的，无法...</text>
-                    <path class="edge" d="M 325 450 L 425 450"/>
+<g class="draggable" transform="translate(180,600)">
+<rect class="node" width="90" height="40" x="-45" y="-20"/>
+<text class="node-text" x="0" y="5">Q-Learning</text>
+<text class="node-year" x="0" y="-10">1989</text>
+</g>
 
-                    <!-- ====================== 聚类分支（绿色） ====================== -->
-                    <!-- 节点1: 层次聚类 1963 -->
-                    <circle class="node node-clustering" cx="150" cy="550" r="25"/>
-                    <text class="node-text" x="150" y="555">层次聚类</text>
-                    <text class="node-year" x="150" y="525">1963</text>
-                    <text class="node-note" x="150" y="585">K-Means需要预...</text>
+</g>
+</svg>
+</div>
+</div>
 
-                    <!-- 节点2: K-Means 1957 -->
-                    <circle class="node node-clustering" cx="300" cy="550" r="25"/>
-                    <text class="node-text" x="300" y="555">K-Means</text>
-                    <text class="node-year" x="300" y="525">1957</text>
-                    <text class="node-note" x="300" y="585">K-Means只能球...</text>
-                    <path class="edge" d="M 175 550 Q 230 550 275 550"/>
+<div class="tab-content" id="knowledge-tab">
+<div class="knowledge-grid">
 
-                    <!-- 节点3: DBSCAN 1996 -->
-                    <circle class="node node-clustering" cx="450" cy="550" r="25"/>
-                    <text class="node-text" x="450" y="555">DBSCAN</text>
-                    <text class="node-year" x="450" y="525">1996</text>
-                    <path class="edge" d="M 325 550 L 425 550"/>
+<div class="knowledge-card"><h3>线性回归</h3><div class="level-bar"><div class="level-fill" style="width:20%">基础</div></div></div>
+<div class="knowledge-card"><h3>多项式回归</h3><div class="level-bar"><div class="level-fill" style="width:20%">基础</div></div></div>
+<div class="knowledge-card"><h3>Ridge回归</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card"><h3>Lasso回归</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card"><h3>K近邻</h3><div class="level-bar"><div class="level-fill" style="width:20%">基础</div></div></div>
+<div class="knowledge-card"><h3>SVM</h3><div class="level-bar"><div class="level-fill" style="width:60%">高级</div></div></div>
+<div class="knowledge-card"><h3>逻辑回归</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card"><h3>决策树</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card"><h3>CNN</h3><div class="level-bar"><div class="level-fill" style="width:80%">深度</div></div></div>
+<div class="knowledge-card"><h3>RNN</h3><div class="level-bar"><div class="level-fill" style="width:80%">深度</div></div></div>
+<div class="knowledge-card"><h3>Attention</h3><div class="level-bar"><div class="level-fill" style="width:80%">深度</div></div></div>
+<div class="knowledge-card"><h3>PCA</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card"><h3>K-Means</h3><div class="level-bar"><div class="level-fill" style="width:20%">基础</div></div></div>
+<div class="knowledge-card"><h3>DBSCAN</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card"><h3>Q-Learning</h3><div class="level-bar"><div class="level-fill" style="width:100%">专家</div></div></div>
 
-                    <!-- ====================== 强化学习分支（粉色） ====================== -->
-                    <!-- 节点1: Q-Learning 1989 -->
-                    <circle class="node node-rl" cx="150" cy="650" r="25"/>
-                    <text class="node-text" x="150" y="655">Q-Learning</text>
-                    <text class="node-year" x="150" y="625">1989</text>
-                    <text class="node-note" x="150" y="685">Q表无法处理连续状态</text>
+</div>
+</div>
 
-                    <!-- 节点2: 策略梯度 1992 -->
-                    <circle class="node node-rl" cx="300" cy="650" r="25"/>
-                    <text class="node-text" x="300" y="655">策略梯度</text>
-                    <text class="node-year" x="300" y="625">1992</text>
-                    <text class="node-note" x="300" y="685">纯策略梯度方差大</text>
-                    <path class="edge" d="M 175 650 Q 230 650 275 650"/>
+</div>
 
-                    <!-- 节点3: Actor-Critic 2000 -->
-                    <circle class="node node-rl" cx="450" cy="650" r="25"/>
-                    <text class="node-text" x="450" y="655">Actor-Critic</text>
-                    <text class="node-year" x="450" y="625">2000</text>
-                    <path class="edge" d="M 325 650 L 425 650"/>
+<script>
+const tabs = document.querySelectorAll('.tab');
+const contents = document.querySelectorAll('.tab-content');
+tabs[0].onclick = ()=>{show('know')}
+tabs[1].onclick = ()=>{show('evo')}
+function show(t){
+    contents.forEach(c=>c.classList.remove('active'))
+    tabs.forEach(t=>t.classList.remove('active'))
+    if(t==='know'){document.getElementById('knowledge-tab').classList.add('active');tabs[0].classList.add('active')}
+    else{document.getElementById('evolution-tab').classList.add('active');tabs[1].classList.add('active')}
+}
 
-                </svg>
-            </div>
-            <!-- ✅ 这里是你可以修改的进化史说明区域 -->
-            <div style="margin-top:20px; color:#cbd5e1; line-height:1.7;">
-                <h3 style="color:#38bdf8; margin-bottom:10px;">📌 进化史说明（可修改）</h3>
-                <p>本思维导图梳理了人工智能核心算法的发展脉络，按「回归、分类、神经网络、聚类、降维、强化学习」六大方向展开，标注了关键算法的提出年份与核心特点。</p>
-                <p>✅ 你可以在SVG代码中修改节点位置、年份、备注文字，添加新的算法节点，完善AI发展史时间线。</p>
-            </div>
-        </div>
-
-        <!-- ====================== 2. 知识图谱标签页 ====================== -->
-        <div class="tab-content" id="knowledge-tab">
-            <div class="knowledge-grid">
-                <!-- ====================== 回归类（紫色）卡片（可修改内容） ====================== -->
-                <div class="knowledge-card card-regression">
-                    <h3>线性回归</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:20%">Lv1</div></div>
-                </div>
-                <div class="knowledge-card card-regression">
-                    <h3>多项式回归</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:20%">Lv1</div></div>
-                </div>
-                <div class="knowledge-card card-regression">
-                    <h3>Ridge回归</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:40%">Lv2</div></div>
-                </div>
-                <div class="knowledge-card card-regression">
-                    <h3>Lasso回归</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:40%">Lv2</div></div>
-                </div>
-
-                <!-- ====================== 分类类（蓝色）卡片（可修改内容） ====================== -->
-                <div class="knowledge-card card-classification">
-                    <h3>逻辑回归</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:20%">Lv1</div></div>
-                </div>
-                <div class="knowledge-card card-classification">
-                    <h3>支持向量机</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:60%">Lv3</div></div>
-                </div>
-                <div class="knowledge-card card-classification">
-                    <h3>K近邻</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:20%">Lv1</div></div>
-                </div>
-                <div class="knowledge-card card-classification">
-                    <h3>决策树</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:40%">Lv2</div></div>
-                </div>
-                <div class="knowledge-card card-classification">
-                    <h3>随机森林</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:60%">Lv3</div></div>
-                </div>
-                <div class="knowledge-card card-classification">
-                    <h3>朴素贝叶斯</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:40%">Lv2</div></div>
-                </div>
-
-                <!-- ====================== 神经网络类（红色）卡片（可修改内容） ====================== -->
-                <div class="knowledge-card card-nn">
-                    <h3>神经网络</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:80%">Lv4</div></div>
-                </div>
-                <div class="knowledge-card card-nn">
-                    <h3>CNN</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:80%">Lv4</div></div>
-                </div>
-                <div class="knowledge-card card-nn">
-                    <h3>RNN</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:80%">Lv4</div></div>
-                </div>
-                <div class="knowledge-card card-nn">
-                    <h3>注意力机制</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:80%">Lv4</div></div>
-                </div>
-
-                <!-- ====================== 聚类类（绿色）卡片（可修改内容） ====================== -->
-                <div class="knowledge-card card-clustering">
-                    <h3>K-Means</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:20%">Lv1</div></div>
-                </div>
-                <div class="knowledge-card card-clustering">
-                    <h3>DBSCAN</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:40%">Lv2</div></div>
-                </div>
-                <div class="knowledge-card card-clustering">
-                    <h3>层次聚类</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:40%">Lv2</div></div>
-                </div>
-
-                <!-- ====================== 降维类（橙色）卡片（可修改内容） ====================== -->
-                <div class="knowledge-card card-dimred">
-                    <h3>PCA</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:40%">Lv2</div></div>
-                </div>
-                <div class="knowledge-card card-dimred">
-                    <h3>LDA</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:40%">Lv2</div></div>
-                </div>
-                <div class="knowledge-card card-dimred">
-                    <h3>t-SNE</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:40%">Lv2</div></div>
-                </div>
-
-                <!-- ====================== 强化学习类（粉色）卡片（可修改内容） ====================== -->
-                <div class="knowledge-card card-rl">
-                    <h3>Q-Learning</h3>
-                    <div class="level-bar"><div class="level-fill" style="width:100%">Lv5</div></div>
-                </div>
-            </div>
-            <!-- ✅ 这里是你可以修改的知识图谱说明区域 -->
-            <div style="margin-top:20px; color:#cbd5e1; line-height:1.7;">
-                <h3 style="color:#38bdf8; margin-bottom:10px;">📌 知识图谱说明</h3>
-                <p>本知识图谱按算法难度分级（Lv1-Lv5），覆盖AI核心算法体系，方便学习者按难度循序渐进学习。</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // 标签页切换功能
-        function switchTab(tabName) {
-            // 隐藏所有内容
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            // 移除所有标签激活状态
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            // 激活选中的标签和内容
-            if (tabName === 'evolution') {
-                document.getElementById('evolution-tab').classList.add('active');
-                document.querySelectorAll('.tab')[1].classList.add('active');
-            } else {
-                document.getElementById('knowledge-tab').classList.add('active');
-                document.querySelectorAll('.tab')[0].classList.add('active');
-            }
-        }
-    </script>
+let drag = null, dx=0, dy=0;
+document.querySelectorAll('.draggable').forEach(g=>{
+    g.onmousedown = e=>{
+        drag = g;
+        let t = g.transform.baseVal[0].matrix;
+        dx = e.clientX - t.e;
+        dy = e.clientY - t.f;
+    }
+});
+document.onmousemove = e=>{
+    if(!drag) return;
+    let x = e.clientX - dx;
+    let y = e.clientY - dy;
+    drag.setAttribute('transform',`translate(${x},${y})`);
+}
+document.onmouseup = ()=>{drag=null}
+</script>
 </body>
 </html>
