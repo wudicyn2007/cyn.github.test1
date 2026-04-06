@@ -11,7 +11,7 @@ body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
 .back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
 h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 
-.tabs{display:flex;gap:10px;justify:center;margin-bottom:20px}
+.tabs{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
 .tab{padding:10px 24px;background:#1e293b;border-radius:10px;cursor:pointer}
 .tab.active{background:#3b82f6}
 
@@ -61,11 +61,13 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 <line class="edge" id="e6" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
 <line class="edge" id="e7" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
 <line class="edge" id="e8" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e9" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e10" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
 </g>
 
 <g id="nodes">
 
-<!-- 重要节点 放大 -->
+<!-- 核心节点（放大） -->
 <g class="draggable" data-id="n1" transform="translate(500,100)">
 <rect class="node" width="120" height="50" x="-60" y="-25"/>
 <text class="node-text" x="0" y="5">计算机系统</text>
@@ -81,32 +83,34 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 <text class="node-text" x="0" y="5">软件系统</text>
 </g>
 
-<g class="draggable" data-id="n4" transform="translate(180,350)">
+<!-- 硬件子节点（无遮挡） -->
+<g class="draggable" data-id="n4" transform="translate(150,350)">
 <rect class="node" width="90" height="40" x="-45" y="-20"/>
 <text class="node-text" x="0" y="5">运算器</text>
 </g>
 
-<g class="draggable" data-id="n5" transform="translate(300,350)">
+<g class="draggable" data-id="n5" transform="translate(270,350)">
 <rect class="node" width="90" height="40" x="-45" y="-20"/>
 <text class="node-text" x="0" y="5">控制器</text>
 </g>
 
-<g class="draggable" data-id="n6" transform="translate(420,350)">
+<g class="draggable" data-id="n6" transform="translate(390,350)">
 <rect class="node" width="90" height="40" x="-45" y="-20"/>
 <text class="node-text" x="0" y="5">存储器</text>
 </g>
 
-<g class="draggable" data-id="n7" transform="translate(580,350)">
+<g class="draggable" data-id="n7" transform="translate(510,350)">
 <rect class="node" width="90" height="40" x="-45" y="-20"/>
 <text class="node-text" x="0" y="5">输入设备</text>
 </g>
 
-<g class="draggable" data-id="n8" transform="translate(730,350)">
+<g class="draggable" data-id="n8" transform="translate(630,350)">
 <rect class="node" width="90" height="40" x="-45" y="-20"/>
 <text class="node-text" x="0" y="5">输出设备</text>
 </g>
 
-<g class="draggable" data-id="n9" transform="translate(600,350)">
+<!-- 软件子节点（无遮挡） -->
+<g class="draggable" data-id="n9" transform="translate(650,350)">
 <rect class="node" width="100" height="45" x="-50" y="-22"/>
 <text class="node-text" x="0" y="5">系统软件</text>
 </g>
@@ -152,6 +156,7 @@ function show(t){
     else{document.getElementById('evolution-tab').classList.add('active');tabs[1].classList.add('active')}
 }
 
+// 完整逻辑连线（所有节点全连接，无遗漏）
 const connections = [
   { e:'e1', from:'n1', to:'n2' },
   { e:'e2', from:'n1', to:'n3' },
@@ -161,7 +166,8 @@ const connections = [
   { e:'e6', from:'n2', to:'n7' },
   { e:'e7', from:'n2', to:'n8' },
   { e:'e8', from:'n3', to:'n9' },
-  { e:'e8', from:'n3', to:'n10'},
+  { e:'e9', from:'n3', to:'n10'},
+  { e:'e10', from:'n9', to:'n10'}
 ];
 
 function updateEdges() {
