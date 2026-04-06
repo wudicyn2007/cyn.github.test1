@@ -47,114 +47,134 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 <div class="tab-content active" id="evolution-tab">
 <div class="timeline-container">
 <svg class="svg-wrapper" viewBox="0 0 1000 650">
-<g id="nodes">
+<defs>
+<marker id="arrow" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+<polygon points="0 0,8 2.5,0 5" fill="#64748b" />
+</marker>
+</defs>
 
-<g class="draggable" transform="translate(150,100)">
-<rect class="node" width="90" height="40" x="-45" y="-20"/>
-<text class="node-text" x="0" y="5">线性回归</text>
-<text class="node-year" x="0" y="-10">1805</text>
+<g id="edges">
+<line class="edge" id="e1" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e2" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e3" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e4" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e5" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e6" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e7" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e8" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e9" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e10" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+<line class="edge" id="e11" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
 </g>
 
-<g class="draggable" transform="translate(280,80)">
+<g id="nodes">
+
+<g class="draggable" data-id="n1" transform="translate(150,100)">
+<rect class="node" width="100" height="45" x="-50" y="-22"/>
+<text class="node-text" x="0" y="5">线性回归</text>
+<text class="node-year" x="0" y="-12">1805</text>
+</g>
+
+<g class="draggable" data-id="n2" transform="translate(280,80)">
 <rect class="node" width="100" height="40" x="-50" y="-20"/>
 <text class="node-text" x="0" y="5">多项式回归</text>
 <text class="node-year" x="0" y="-10">1815</text>
 </g>
 
-<g class="draggable" transform="translate(280,150)">
+<g class="draggable" data-id="n3" transform="translate(280,150)">
 <rect class="node" width="70" height="40" x="-35" y="-20"/>
 <text class="node-text" x="0" y="5">Ridge</text>
 <text class="node-year" x="0" y="-10">1970</text>
 </g>
 
-<g class="draggable" transform="translate(150,180)">
+<g class="draggable" data-id="n4" transform="translate(150,180)">
 <rect class="node" width="70" height="40" x="-35" y="-20"/>
 <text class="node-text" x="0" y="5">Lasso</text>
 <text class="node-year" x="0" y="-10">1996</text>
 </g>
 
-<g class="draggable" transform="translate(420,100)">
+<g class="draggable" data-id="n5" transform="translate(420,100)">
 <rect class="node" width="60" height="40" x="-30" y="-20"/>
 <text class="node-text" x="0" y="5">KNN</text>
 <text class="node-year" x="0" y="-10">1951</text>
 </g>
 
-<g class="draggable" transform="translate(530,100)">
+<g class="draggable" data-id="n6" transform="translate(530,100)">
 <rect class="node" width="60" height="40" x="-30" y="-20"/>
 <text class="node-text" x="0" y="5">SVM</text>
 <text class="node-year" x="0" y="-10">1995</text>
 </g>
 
-<g class="draggable" transform="translate(420,200)">
+<g class="draggable" data-id="n7" transform="translate(420,200)">
 <rect class="node" width="80" height="40" x="-40" y="-20"/>
 <text class="node-text" x="0" y="5">逻辑回归</text>
 <text class="node-year" x="0" y="-10">1958</text>
 </g>
 
-<g class="draggable" transform="translate(530,200)">
+<g class="draggable" data-id="n8" transform="translate(530,200)">
 <rect class="node" width="80" height="40" x="-40" y="-20"/>
 <text class="node-text" x="0" y="5">决策树</text>
 <text class="node-year" x="0" y="-10">1986</text>
 </g>
 
-<g class="draggable" transform="translate(150,300)">
-<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<g class="draggable" data-id="n9" transform="translate(150,300)">
+<rect class="node" width="70" height="45" x="-35" y="-22"/>
 <text class="node-text" x="0" y="5">CNN</text>
-<text class="node-year" x="0" y="-10">1998</text>
+<text class="node-year" x="0" y="-12">1998</text>
 </g>
 
-<g class="draggable" transform="translate(280,300)">
-<rect class="node" width="80" height="40" x="-40" y="-20"/>
+<g class="draggable" data-id="n10" transform="translate(280,300)">
+<rect class="node" width="100" height="45" x="-50" y="-22"/>
 <text class="node-text" x="0" y="5">神经网络</text>
-<text class="node-year" x="0" y="-10">1986</text>
+<text class="node-year" x="0" y="-12">1986</text>
 </g>
 
-<g class="draggable" transform="translate(420,300)">
+<g class="draggable" data-id="n11" transform="translate(420,300)">
 <rect class="node" width="60" height="40" x="-30" y="-20"/>
 <text class="node-text" x="0" y="5">RNN</text>
 <text class="node-year" x="0" y="-10">1986</text>
 </g>
 
-<g class="draggable" transform="translate(550,300)">
-<rect class="node" width="80" height="40" x="-40" y="-20"/>
+<g class="draggable" data-id="n12" transform="translate(550,300)">
+<rect class="node" width="90" height="45" x="-45" y="-22"/>
 <text class="node-text" x="0" y="5">Attention</text>
-<text class="node-year" x="0" y="-10">2014</text>
+<text class="node-year" x="0" y="-12">2014</text>
 </g>
 
-<g class="draggable" transform="translate(180,420)">
-<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<g class="draggable" data-id="n13" transform="translate(180,420)">
+<rect class="node" width="70" height="45" x="-35" y="-22"/>
 <text class="node-text" x="0" y="5">PCA</text>
-<text class="node-year" x="0" y="-10">1901</text>
+<text class="node-year" x="0" y="-12">1901</text>
 </g>
 
-<g class="draggable" transform="translate(320,420)">
+<g class="draggable" data-id="n14" transform="translate(320,420)">
 <rect class="node" width="60" height="40" x="-30" y="-20"/>
 <text class="node-text" x="0" y="5">LDA</text>
 <text class="node-year" x="0" y="-10">1936</text>
 </g>
 
-<g class="draggable" transform="translate(450,420)">
+<g class="draggable" data-id="n15" transform="translate(450,420)">
 <rect class="node" width="70" height="40" x="-35" y="-20"/>
 <text class="node-text" x="0" y="5">t-SNE</text>
 <text class="node-year" x="0" y="-10">2008</text>
 </g>
 
-<g class="draggable" transform="translate(180,520)">
-<rect class="node" width="90" height="40" x="-45" y="-20"/>
+<g class="draggable" data-id="n16" transform="translate(180,520)">
+<rect class="node" width="90" height="45" x="-45" y="-22"/>
 <text class="node-text" x="0" y="5">K-Means</text>
-<text class="node-year" x="0" y="-10">1957</text>
+<text class="node-year" x="0" y="-12">1957</text>
 </g>
 
-<g class="draggable" transform="translate(330,520)">
+<g class="draggable" data-id="n17" transform="translate(330,520)">
 <rect class="node" width="80" height="40" x="-40" y="-20"/>
 <text class="node-text" x="0" y="5">DBSCAN</text>
 <text class="node-year" x="0" y="-10">1996</text>
 </g>
 
-<g class="draggable" transform="translate(180,600)">
-<rect class="node" width="90" height="40" x="-45" y="-20"/>
+<g class="draggable" data-id="n18" transform="translate(180,600)">
+<rect class="node" width="100" height="45" x="-50" y="-22"/>
 <text class="node-text" x="0" y="5">Q-Learning</text>
-<text class="node-year" x="0" y="-10">1989</text>
+<text class="node-year" x="0" y="-12">1989</text>
 </g>
 
 </g>
@@ -198,22 +218,57 @@ function show(t){
     else{document.getElementById('evolution-tab').classList.add('active');tabs[1].classList.add('active')}
 }
 
+const connections = [
+  { e: 'e1', from: 'n1', to: 'n2' },
+  { e: 'e2', from: 'n1', to: 'n3' },
+  { e: 'e3', from: 'n3', to: 'n4' },
+  { e: 'e4', from: 'n1', to: 'n5' },
+  { e: 'e5', from: 'n5', to: 'n6' },
+  { e: 'e6', from: 'n5', to: 'n7' },
+  { e: 'e7', from: 'n7', to: 'n8' },
+  { e: 'e8', from: 'n9', to: 'n10' },
+  { e: 'e9', from: 'n10', to: 'n11' },
+  { e: 'e10', from: 'n11', to: 'n12' },
+  { e: 'e11', from: 'n13', to: 'n14' },
+];
+
+function updateEdges() {
+  connections.forEach(c => {
+    const from = document.querySelector(`[data-id="${c.from}"]`);
+    const to = document.querySelector(`[data-id="${c.to}"]`);
+    const edge = document.getElementById(c.e);
+    if (!from || !to || !edge) return;
+
+    const mFrom = from.transform.baseVal[0].matrix;
+    const mTo = to.transform.baseVal[0].matrix;
+
+    edge.setAttribute('x1', mFrom.e);
+    edge.setAttribute('y1', mFrom.f);
+    edge.setAttribute('x2', mTo.e);
+    edge.setAttribute('y2', mTo.f);
+  });
+}
+
 let drag = null, dx=0, dy=0;
 document.querySelectorAll('.draggable').forEach(g=>{
-    g.onmousedown = e=>{
-        drag = g;
-        let t = g.transform.baseVal[0].matrix;
-        dx = e.clientX - t.e;
-        dy = e.clientY - t.f;
-    }
+  g.onmousedown = e=>{
+    drag = g;
+    const t = g.transform.baseVal[0].matrix;
+    dx = e.clientX - t.e;
+    dy = e.clientY - t.f;
+  }
 });
+
 document.onmousemove = e=>{
-    if(!drag) return;
-    let x = e.clientX - dx;
-    let y = e.clientY - dy;
-    drag.setAttribute('transform',`translate(${x},${y})`);
-}
-document.onmouseup = ()=>{drag=null}
+  if (!drag) return;
+  const x = e.clientX - dx;
+  const y = e.clientY - dy;
+  drag.setAttribute('transform', `translate(${x},${y})`);
+  updateEdges();
+};
+
+document.onmouseup = ()=>{ drag=null; }
+window.onload = updateEdges;
 </script>
 </body>
 </html>
