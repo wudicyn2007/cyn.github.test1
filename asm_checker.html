@@ -1,121 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <title>炸弹实验室模拟器</title>
-    <style>
-        body { background: #1a1a1a; color: #fff; font-family: monospace; }
-        .terminal {
-            background: #000;
-            width: 90%;
-            height: 500px;
-            margin: 20px auto;
-            padding: 15px;
-            border: 2px solid #00ff00;
-            overflow-y: auto;
-        }
-        input {
-            width: 90%;
-            margin: 0 auto;
-            display: block;
-            background: #222;
-            color: #0f0;
-            border: 1px solid #0f0;
-            padding: 8px;
-            font-size: 14px;
-        }
-        .line { margin: 4px 0; }
-        .error { color: #ff3333; }
-        .asm { color: #66ff66; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汇编实验 - Bomb Lab 模拟终端</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Consolas','Monaco','Courier New',monospace}
+body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
+.container{max-width:1000px;margin:0 auto}
+.back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px;font-family:Arial}
+h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px;font-family:Arial}
+
+/* 汇编代码展示区 */
+.code-box{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:24px;margin-bottom:20px}
+.code-title{color:#a78bfa;margin-bottom:12px;font-size:16px}
+.asm-code{line-height:1.8;font-size:14px;color:#cbd5e1}
+
+/* 终端区域 */
+.terminal{background:#020202;border-radius:12px;padding:20px;height:500px;display:flex;flex-direction:column}
+.terminal-output{flex:1;overflow-y:auto;padding-bottom:10px}
+.terminal-line{margin:4px 0}
+.prompt{color:#34d399;font-weight:bold}
+.command{color:#ffffff}
+.output{color:#cccccc}
+.error{color:#f43f5e}
+.success{color:#34d399}
+
+/* 输入框 */
+.input-line{display:flex;align-items:center;border-top:1px solid #222;padding-top:10px}
+.input-prompt{color:#34d399;font-weight:bold;margin-right:8px}
+#command-input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:14px;padding:4px 8px}
+</style>
 </head>
 <body>
-    <div class="terminal" id="term"></div>
-    <input type="text" id="input" placeholder="输入命令，如 disas phase_1、x/s 0x402400、run...">
 
-    <script>
-        const term = document.getElementById('term');
-        const input = document.getElementById('input');
-        let history = '';
+<div class="container">
+<a href="select.html" class="back-btn">← 返回选择页</a>
+<h1>Bomb Lab 汇编实验 · 模拟 GDB 终端</h1>
 
-        // 答案数据
-        const answers = {
-            "0x402400": "Border relations with Canada have never been better.",
-            "0x40245e": "flyers",
-            "0x4024b0": "maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?"
-        };
+<div class="code-box">
+<div class="code-title">phase_1 反汇编代码</div>
+<div class="asm-code">
+0000000000400ee0 &lt;phase_1&gt;:<br>
+400ee0: sub    $0x8,%rsp<br>
+400ee4: mov    $0x402400,%esi<br>
+400ee9: callq  401338 &lt;strings_not_equal&gt;<br>
+400eee: test   %eax,%eax<br>
+400ef0: je     400ef7<br>
+400ef2: callq  40143a &lt;explode_bomb&gt;<br>
+400ef7: add    $0x8,%rsp<br>
+400efb: retq
+</div>
+</div>
 
-        // 汇编代码
-        const asm = {
-"phase_1": `Dump of assembler code for function phase_1:
-   0x0000000000400ee0 <+0>:     sub    $0x8,%rsp
-   0x0000000000400ee4 <+4>:     mov    $0x402400,%esi
-   0x0000000000400ee9 <+9>:     call   0x401338 <strings_not_equal>
-   0x0000000000400eee <+14>:    test   %eax,%eax
-   0x0000000000400ef0 <+16>:    je     0x400ef7 <phase_1+23>
-   0x0000000000400ef2 <+18>:    call   0x40143a <explode_bomb>
-   0x0000000000400ef7 <+23>:    add    $0x8,%rsp
-   0x0000000000400efb <+27>:    ret`
-};
+<div class="terminal">
+<div class="terminal-output" id="output">
+<div class="output">欢迎使用 GDB 模拟终端</div>
+<div class="output">实验目标：使用 x/s 命令查看内存字符串，解除 phase_1 炸弹</div>
+<div class="output">示例：x/s 0x402400</div><br>
+</div>
+<div class="input-line">
+<span class="input-prompt">(gdb)</span>
+<input type="text" id="command-input" autocomplete="off" placeholder="输入命令...">
+</div>
+</div>
 
-        function print(msg, cls = '') {
-            history += `<div class="line ${cls}">${msg}</div>`;
-            term.innerHTML = history;
-            term.scrollTop = term.scrollHeight;
+</div>
+
+<script>
+const output = document.getElementById('output');
+const input = document.getElementById('command-input');
+const correctAddr = '0x402400';
+const correctStr = 'Border relations with Canada have never been better.';
+
+// 回车执行命令
+input.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){
+        const cmd = input.value.trim();
+        addLine('(gdb)', cmd, 'command');
+        
+        if(cmd === 'x/s 0x402400'){
+            addLine('', `${correctAddr}: "${correctStr}"`, 'success');
+        } else if(cmd.startsWith('x/s')){
+            addLine('', '无法访问地址：无法访问内存地址', 'error');
+        } else if(cmd === ''){
+            // 空命令不处理
+        } else {
+            addLine('', `Undefined command: "${cmd}". Try "help".`, 'error');
         }
+        
+        input.value = '';
+        output.scrollTop = output.scrollHeight;
+    }
+});
 
-        function runCommand(cmd) {
-            print(`(gdb) ${cmd}`);
-            cmd = cmd.trim();
+function addLine(prompt, text, cls){
+    const div = document.createElement('div');
+    div.className = 'terminal-line';
+    
+    if(prompt){
+        const span = document.createElement('span');
+        span.className = 'prompt';
+        span.textContent = prompt + ' ';
+        div.appendChild(span);
+    }
+    
+    const content = document.createElement('span');
+    content.className = cls || 'output';
+    content.textContent = text;
+    div.appendChild(content);
+    output.appendChild(div);
+}
 
-            // 1. 查看内存字符串 x/s
-            if (cmd.startsWith("x/s ")) {
-                let addr = cmd.split(" ")[1];
-                if (answers[addr]) {
-                    print(`${addr}:   "${answers[addr]}"`);
-                } else {
-                    print("Cannot access memory at address " + addr, "error");
-                }
-                return;
-            }
-
-            // 2. 反汇编
-            if (cmd === "disas phase_1") {
-                print(asm.phase_1, "asm");
-                return;
-            }
-
-            // 3. 运行
-            if (cmd === "run") {
-                print("Welcome to my fiendish little bomb. You have 6 phases with");
-                print("which to blow yourself up. Have a nice day!");
-                return;
-            }
-
-            // 4. 断点
-            if (cmd.startsWith("break")) {
-                print("Breakpoint set at " + cmd.split(" ")[1]);
-                return;
-            }
-
-            // 未知命令
-            print("Undefined command: \"" + cmd + "\". Try \"help\".", "error");
-        }
-
-        input.addEventListener('keydown', e => {
-            if (e.key === 'Enter') {
-                runCommand(input.value);
-                input.value = '';
-            }
-        });
-
-        print("欢迎使用 炸弹实验室 模拟器");
-        print("支持命令：");
-        print("disas phase_1    —— 查看第一关汇编（分行显示）");
-        print("x/s 0x402400     —— 查看第一关答案");
-        print("run              —— 运行炸弹");
-        print("break phase_1    —— 设置断点");
-        print("---------------------------------------");
-    </script>
+// 自动聚焦
+input.focus();
+</script>
 </body>
 </html>
