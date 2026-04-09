@@ -3,39 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bomb Lab 模拟 GDB 环境</title>
+<title>Bomb Lab GDB 模拟</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Consolas','Monaco','Courier New',monospace}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Consolas,monospace}
 body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
 .container{max-width:1000px;margin:0 auto}
-.back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px;font-family:Arial}
-h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px;font-family:Arial}
+.back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
+h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 
 .code-box{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:24px;margin-bottom:20px}
 .code-title{color:#a78bfa;margin-bottom:12px}
 .asm-code{line-height:1.8;font-size:14px;color:#cbd5e1}
 
-.terminal{background:#020202;border-radius:12px;padding:20px;height:520px;display:flex;flex-direction:column}
+.terminal{background:#000;border-radius:12px;padding:20px;height:550px;display:flex;flex-direction:column}
 .terminal-output{flex:1;overflow-y:auto;padding-bottom:10px}
-.terminal-line{margin:4px 0}
-.prompt{color:#34d399;font-weight:bold}
-.command{color:#fff}
-.output{color:#ccc}
-.success{color:#34d399}
-.error{color:#f43f5e}
-.info{color:#38bdf8}
-.bomb{color:#f59e0b;font-weight:bold}
+.terminal-line{margin:3px 0;color:#ccc}
+.prompt{color:#00ff00;font-weight:bold}
+.cmd{color:#fff}
+.info{color:#ccc}
+.success{color:#00ff00}
+.break{color:#00ff00}
+.error{color:#ff3333}
 
 .input-line{display:flex;align-items:center;border-top:1px solid #222;padding-top:10px}
-.input-prompt{color:#34d399;font-weight:bold;margin-right:8px}
-#command-input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:14px;padding:4px 8px}
+.input-prompt{color:#00ff00;font-weight:bold;margin-right:8px}
+#cmdInput{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:14px;padding:4px}
 </style>
 </head>
 <body>
 
 <div class="container">
 <a href="select.html" class="back-btn">← 返回选择页</a>
-<h1>Bomb Lab 实验 - GDB 模拟环境</h1>
+<h1>Bomb Lab 汇编实验 · GDB 模拟</h1>
 
 <div class="code-box">
 <div class="code-title">phase_1 反汇编代码</div>
@@ -56,7 +55,7 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px;font-family
 <div class="terminal-output" id="output"></div>
 <div class="input-line">
 <span class="input-prompt">(gdb)</span>
-<input type="text" id="command-input" autocomplete="off">
+<input type="text" id="cmdInput" autocomplete="off">
 </div>
 </div>
 
@@ -64,141 +63,96 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px;font-family
 
 <script>
 const output = document.getElementById('output');
-const input = document.getElementById('command-input');
+const input = document.getElementById('cmdInput');
 
-// 实验配置
-const PHASE1_ANSWER = "Border relations with Canada have never been better.";
-const STRING_ADDR = "0x402400";
+const ANSWER = "Border relations with Canada have never been better.";
+let hasBreakpoint = false;
+let isRunning = false;
+let hitBreakpoint = false;
 
-// 状态
-let state = {
-    breakpoint: false,
-    running: false,
-    waitingAnswer: false
-};
+// 初始化
+addText("GDB 模拟环境已启动\n", "info");
+input.focus();
 
-// 初始化欢迎信息
-log("欢迎使用 Bomb Lab 模拟环境", "info");
-log("实验目标：通过 GDB 命令找到 phase_1 的答案", "info");
-log("常用命令：", "info");
-log("  b phase_1      设置断点");
-log("  run            运行程序");
-log(`  x/s ${STRING_ADDR}  查看内存字符串`);
-log("  answer [内容]  输入答案");
-log("");
-
-// 回车监听
-input.addEventListener('keydown', (e) => {
+// 回车执行
+input.addEventListener('keydown', e => {
     if(e.key !== 'Enter') return;
     const cmd = input.value.trim();
     addPrompt(cmd);
-    handleCommand(cmd);
+    exec(cmd);
     input.value = '';
     output.scrollTop = output.scrollHeight;
 });
 
-function handleCommand(cmd) {
-    const c = cmd.toLowerCase().trim();
+function exec(cmd) {
+    const c = cmd.trim();
 
-    // ----------------------
-    // 1. 设置断点
-    // ----------------------
-    if(c === 'b phase_1' || c === 'break phase_1') {
-        state.breakpoint = true;
-        log("Breakpoint 1 at 0x400ee0: phase_1.", "success");
+    // ========== 设置断点 ==========
+    if(c === 'break phase_1' || c === 'b phase_1') {
+        hasBreakpoint = true;
+        addText('Breakpoint 1 at 0x400ee0', 'break');
         return;
     }
 
-    // ----------------------
-    // 2. 运行程序
-    // ----------------------
+    // ========== 运行 ==========
     if(c === 'run' || c === 'r') {
-        if(!state.breakpoint) {
-            log("程序启动...", "info");
-            log("欢迎来到 Bomb Lab！", "bomb");
-           ("请输入 phase_1 的答案：");
-            state.waitingAnswer = true;
+        isRunning = true;
+        hitBreakpoint = false;
+        addText('Starting program: /home/cyn/bomb/bomb', 'info');
+        addText('[Thread debugging using libthread_db enabled]', 'info');
+        addText('Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".', 'info');
+        addText('Welcome to my fiendish little bomb. You have 6 phases with', 'info');
+        addText('which to blow yourself up. Have a nice day!\n', 'info');
+
+        if(hasBreakpoint) {
+            addText(ANSWER, 'info');
+            addText('\nBreakpoint 1, 0x0000000000400ee0 in phase_1 ()', 'break');
+            hitBreakpoint = true;
+        }
+        return;
+    }
+
+    // ========== 继续执行 ==========
+    if(c === 'continue' || c === 'c') {
+        if(!hitBreakpoint) {
+            addText('No breakpoint.', 'error');
             return;
         }
-        log("程序启动...", "info");
-        log("Breakpoint 1, 0x0000000000400ee0 in phase_1 ()", "success");
-        log("已在 phase_1 停下，可使用 x/s 查看字符串");
+        addText('Continuing.\n', 'info');
+        addText('Phase 1 defused. How about the next one?', 'success');
+        hitBreakpoint = false;
         return;
     }
 
-    // ----------------------
-    // 3. 查看字符串
-    // ----------------------
-    if(c === `x/s ${STRING_ADDR}`) {
-        log(`${STRING_ADDR}: "${PHASE1_ANSWER}"`, "success");
+    // ========== 查看字符串 ==========
+    if(c === 'x/s 0x402400') {
+        addText('0x402400:	"Border relations with Canada have never been better."', 'success');
         return;
     }
 
-    // ----------------------
-    // 4. 输入答案
-    // ----------------------
-    if(c.startsWith('answer ')) {
-        const userAns = cmd.substring(7).trim();
-        if(userAns === PHASE1_ANSWER) {
-            log("恭喜！答案正确！phase_1 已通过！", "success");
-            log("炸弹已解除！", "success");
-        } else {
-            log("错误！答案不正确！", "error");
-            log("BOOM！炸弹爆炸！实验失败！", "bomb");
-        }
-        state.waitingAnswer = false;
-        return;
-    }
-
-    // ----------------------
-    // 5. 直接输入答案（模拟真实输入）
-    // ----------------------
-    if(state.waitingAnswer) {
-        if(cmd === PHASE1_ANSWER) {
-            log("恭喜！答案正确！phase_1 已通过！", "success");
-            log("炸弹已解除！", "success");
-        } else {
-            log("错误！答案不正确！", "error");
-            log("BOOM！炸弹爆炸！实验失败！", "bomb");
-        }
-        state.waitingAnswer = false;
-        return;
-    }
-
-    // ----------------------
-    // 6. 无效命令
-    // ----------------------
-    log(`Undefined command: "${cmd}". Try "help".`, "error");
+    // ========== 错误命令 ==========
+    addText(`Undefined command: "${cmd}". Try "help".`, 'error');
 }
 
-// 输出工具函数
-function log(text, cls) {
+// 输出 (gdb) 命令行
+function addPrompt(cmd) {
+    const div = document.createElement('div');
+    div.className = 'terminal-line';
+    div.innerHTML = `<span class="prompt">(gdb)</span> <span class="cmd">${cmd}</span>`;
+    output.appendChild(div);
+}
+
+// 输出普通文本
+function addText(text, cls) {
     const div = document.createElement('div');
     div.className = 'terminal-line';
     const span = document.createElement('span');
-    span.className = cls || 'output';
+    span.className = cls || 'info';
     span.textContent = text;
     div.appendChild(span);
     output.appendChild(div);
 }
-
-// 添加命令行
-function addPrompt(cmd) {
-    const div = document.createElement('div');
-    div.className = 'terminal-line';
-    const p = document.createElement('span');
-    p.className = 'prompt';
-    p.textContent = '(gdb) ';
-    const c = document.createElement('span');
-    c.className = 'command';
-    c.textContent = cmd;
-    div.appendChild(p);
-    div.appendChild(c);
-    output.appendChild(div);
-}
-
-// 自动聚焦
-input.focus();
 </script>
+
 </body>
 </html>
