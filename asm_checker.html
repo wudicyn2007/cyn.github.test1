@@ -1,176 +1,121 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>汇编练习题 - Bomb Lab</title>
+    <meta charset="utf-8">
+    <title>炸弹实验室模拟器</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+        body { background: #1a1a1a; color: #fff; font-family: monospace; }
+        .terminal {
+            background: #000;
+            width: 90%;
+            height: 500px;
+            margin: 20px auto;
+            padding: 15px;
+            border: 2px solid #00ff00;
+            overflow-y: auto;
         }
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: #fff;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            width: 100%;
-            max-width: 900px;
-        }
-        .back-btn {
-            display: inline-block;
-            padding: 8px 20px;
-            background: #38bdf8;
-            color: #0f172a;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        h1 {
-            color: #38bdf8;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        /* 题目区域 */
-        .problem-box {
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-        .problem-title {
-            color: #a78bfa;
-            margin-bottom: 12px;
-            font-size: 18px;
-        }
-        .asm-code {
-            background: #0f172a;
-            padding: 16px;
-            border-radius: 8px;
-            font-family: Consolas, monospace;
+        input {
+            width: 90%;
+            margin: 0 auto;
+            display: block;
+            background: #222;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 8px;
             font-size: 14px;
-            line-height: 1.6;
-            color: #cbd5e1;
-            overflow-x: auto;
-            margin-bottom: 16px;
         }
-        .question {
-            font-size: 16px;
-            margin-bottom: 12px;
-            color: #e2e8f0;
-        }
-
-        /* 输入与按钮 */
-        .answer-input {
-            width: 100%;
-            padding: 12px 16px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 16px;
-            margin-bottom: 12px;
-            outline: none;
-        }
-        .check-btn {
-            padding: 10px 24px;
-            background: #38bdf8;
-            color: #0f172a;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* 结果提示 */
-        .result {
-            margin-top: 16px;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 15px;
-        }
-        .result-right {
-            background: #166534;
-            color: #bbf7d0;
-        }
-        .result-wrong {
-            background: #7f1d1d;
-            color: #fecaca;
-        }
-
-        /* 解析 */
-        .explain {
-            margin-top: 12px;
-            color: #94a3b8;
-            font-size: 14px;
-            line-height: 1.6;
-        }
+        .line { margin: 4px 0; }
+        .error { color: #ff3333; }
+        .asm { color: #66ff66; }
     </style>
 </head>
 <body>
+    <div class="terminal" id="term"></div>
+    <input type="text" id="input" placeholder="输入命令，如 disas phase_1、x/s 0x402400、run...">
 
-<div class="container">
-    <a href="select.html" class="back-btn">← 返回选择页</a>
-    <h1>汇编练习题 · Binary Bomb</h1>
+    <script>
+        const term = document.getElementById('term');
+        const input = document.getElementById('input');
+        let history = '';
 
-    <div class="problem-box">
-        <div class="problem-title">phase_1 反汇编分析</div>
-        <div class="asm-code">
-0000000000400ee0 &lt;phase_1&gt;:
-400ee0: sub    $0x8,%rsp
-400ee4: mov    $0x402400,%esi
-400ee9: callq  401338 &lt;strings_not_equal&gt;
-400eee: test   %eax,%eax
-400ef0: je     400ef7
-400ef2: callq  40143a &lt;explode_bomb&gt;
-400ef7: add    $0x8,%rsp
-400efb: retq
-        </div>
+        // 答案数据
+        const answers = {
+            "0x402400": "Border relations with Canada have never been better.",
+            "0x40245e": "flyers",
+            "0x4024b0": "maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?"
+        };
 
-        <div class="question">
-            问题：请输入 phase_1 正确的字符串答案（解除炸弹）：
-        </div>
+        // 汇编代码
+        const asm = {
+"phase_1": `Dump of assembler code for function phase_1:
+   0x0000000000400ee0 <+0>:     sub    $0x8,%rsp
+   0x0000000000400ee4 <+4>:     mov    $0x402400,%esi
+   0x0000000000400ee9 <+9>:     call   0x401338 <strings_not_equal>
+   0x0000000000400eee <+14>:    test   %eax,%eax
+   0x0000000000400ef0 <+16>:    je     0x400ef7 <phase_1+23>
+   0x0000000000400ef2 <+18>:    call   0x40143a <explode_bomb>
+   0x0000000000400ef7 <+23>:    add    $0x8,%rsp
+   0x0000000000400efb <+27>:    ret`
+};
 
-        <input type="text" class="answer-input" id="answer" placeholder="请输入答案">
-        <button class="check-btn" onclick="checkAnswer()">提交答案</button>
-
-        <div class="result" id="result" style="display:none;"></div>
-        <div class="explain" id="explain" style="display:none;"></div>
-    </div>
-</div>
-
-<script>
-    function checkAnswer() {
-        const ans = document.getElementById('answer').value.trim();
-        const result = document.getElementById('result');
-        const explain = document.getElementById('explain');
-
-        // 正确答案来自你的实验资料
-        const correct = "Border relations with Canada have never been better.";
-
-        if (ans === correct) {
-            result.innerText = "✅ 回答正确！炸弹已解除。";
-            result.className = "result result-right";
-            explain.innerText = "解析：phase_1 通过调用 strings_not_equal 比较输入与固定字符串。字符串地址为 0x402400，使用 gdb 命令 x/s 0x402400 可直接读取。";
-        } else {
-            result.innerText = "❌ 答案错误，炸弹爆炸！";
-            result.className = "result result-wrong";
-            explain.innerText = "提示：使用 gdb 查看内存字符串：x/s 0x402400";
+        function print(msg, cls = '') {
+            history += `<div class="line ${cls}">${msg}</div>`;
+            term.innerHTML = history;
+            term.scrollTop = term.scrollHeight;
         }
 
-        result.style.display = "block";
-        explain.style.display = "block";
-    }
-</script>
+        function runCommand(cmd) {
+            print(`(gdb) ${cmd}`);
+            cmd = cmd.trim();
 
+            // 1. 查看内存字符串 x/s
+            if (cmd.startsWith("x/s ")) {
+                let addr = cmd.split(" ")[1];
+                if (answers[addr]) {
+                    print(`${addr}:   "${answers[addr]}"`);
+                } else {
+                    print("Cannot access memory at address " + addr, "error");
+                }
+                return;
+            }
+
+            // 2. 反汇编
+            if (cmd === "disas phase_1") {
+                print(asm.phase_1, "asm");
+                return;
+            }
+
+            // 3. 运行
+            if (cmd === "run") {
+                print("Welcome to my fiendish little bomb. You have 6 phases with");
+                print("which to blow yourself up. Have a nice day!");
+                return;
+            }
+
+            // 4. 断点
+            if (cmd.startsWith("break")) {
+                print("Breakpoint set at " + cmd.split(" ")[1]);
+                return;
+            }
+
+            // 未知命令
+            print("Undefined command: \"" + cmd + "\". Try \"help\".", "error");
+        }
+
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                runCommand(input.value);
+                input.value = '';
+            }
+        });
+
+        print("欢迎使用 炸弹实验室 模拟器");
+        print("支持命令：");
+        print("disas phase_1    —— 查看第一关汇编（分行显示）");
+        print("x/s 0x402400     —— 查看第一关答案");
+        print("run              —— 运行炸弹");
+        print("break phase_1    —— 设置断点");
+        print("---------------------------------------");
+    </script>
 </body>
 </html>
