@@ -11,7 +11,7 @@ body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
 .back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
 h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 
-.terminal{background:#000;border-radius:12px;padding:20px;height:600px;display:flex;flex-direction:column}
+.terminal{background:#000;border-radius:12px;padding:20px;height:620px;display:flex;flex-direction:column}
 .terminal-output{flex:1;overflow-y:auto;padding-bottom:10px}
 .terminal-line{margin:3px 0;color:#ccc}
 .prompt{color:#00ff00;font-weight:bold}
@@ -47,48 +47,66 @@ const output = document.getElementById('output');
 const input = document.getElementById('cmdInput');
 const prompt = document.getElementById('prompt');
 
-// 正确答案（仅 phase_1 示例，可扩展全部6阶段）
-const PHASE1_ANSWER = "Border relations with Canada have never been better.";
+// 答案
+const PHASE1 = "Border relations with Canada have never been better.";
 
-// 状态机
+// 状态
 let state = {
-    mode: "gdb",      // gdb / running
-    running: false,
+    mode: "gdb",       // gdb / running
+    hasBreak: false,
+    isRunning: false,
     exited: true
 };
 
 // 初始化
 input.focus();
-addText("GDB 模拟环境已启动", "info");
 
-// 回车事件
+// 回车
 input.addEventListener('keydown', e => {
     if(e.key !== 'Enter') return;
     const line = input.value.trim();
     input.value = '';
 
-    if(state.mode === "gdb") {
+    if(state.mode === "gdb"){
         addPrompt(line);
-        handleGDBCommand(line);
-    } else {
-        addInputLine(line);
-        handleUserInput(line);
+        handleGDB(line);
+    }else{
+        addInput(line);
+        handleInput(line);
     }
     output.scrollTop = output.scrollHeight;
 });
 
-// --------------------------
-// GDB 命令处理
-// --------------------------
-function handleGDBCommand(line) {
-    const cmd = line.trim().toLowerCase();
+// ------------------------------
+// GDB 命令
+// ------------------------------
+function handleGDB(cmd){
+    const c = cmd.toLowerCase().trim();
 
-    if(cmd === "run" || cmd === "r") {
-        if(!state.exited) {
-            addText("The program is being run.", "error");
+    // quit 退出
+    if(c === "quit" || c === "q"){
+        addText("A debugging session is active.", "info");
+        addText("Exit anyway?", "info");
+        addText("Quit now?", "info");
+        addPrompt("y");
+        addText("", "info");
+        addText("Waiting for debugger to disconnect...", "info");
+        state.mode = "gdb";
+        state.exited = true;
+        state.hasBreak = false;
+        state.isRunning = false;
+        prompt.textContent = "(gdb)";
+        return;
+    }
+
+    // run
+    if(c === "run" || c === "r"){
+        if(!state.exited){
+            addText("The program is already being run.", "error");
             return;
         }
         state.exited = false;
+        state.isRunning = true;
         state.mode = "running";
         prompt.textContent = "";
 
@@ -97,106 +115,158 @@ function handleGDBCommand(line) {
         addText('Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".', "info");
         addText("Welcome to my fiendish little bomb. You have 6 phases with", "info");
         addText("which to blow yourself up. Have a nice day!", "info");
+
+        if(state.hasBreak){
+            addText(PHASE1, "info");
+            addText("", "info");
+            addText("Breakpoint 1, 0x0000000000400ee0 in phase_1 ()", "success");
+        }
         return;
     }
 
-    if(cmd === "continue" || cmd === "c") {
-        addText("The program is not being run.", "error");
+    // continue
+    if(c === "continue" || c === "c"){
+        if(!state.isRunning || state.exited){
+            addText("The program is not being run.", "error");
+            return;
+        }
+        if(!state.hasBreak){
+            addText("Continuing.", "info");
+            addText("Program exited.", "info");
+            state.exited = true;
+            state.isRunning = false;
+            switchGDB();
+            return;
+        }
+        addText("Continuing.", "info");
+        addText("", "info");
+        addText("Phase 1 defused. How about the next one?", "success");
+        state.exited = true;
+        state.isRunning = false;
+        switchGDB();
         return;
     }
 
-    if(cmd.startsWith("disas")) {
-        addText("Dump of assembler code for function phase_1:", "info");
-        addText("   0x0000000000400ee0 <+0>:     sub    $0x8,%rsp", "info");
-        addText("   0x0000000000400ee4 <+4>:     mov    $0x402400,%esi", "info");
-        addText("   0x0000000000400ee9 <+9>:     call   0x401338 <strings_not_equal>", "info");
-        addText("   0x0000000000400eee <+14>:    test   %eax,%eax", "info");
-        addText("   0x0000000000400ef0 <+16>:    je     0x400ef7 <phase_1+23>", "info");
-        addText("   0x0000000000400ef2 <+18>:    call   0x40143a <explode_bomb>", "info");
-        addText("   0x0000000000400ef7 <+23>:    add    $0x8,%rsp", "info");
-        addText("   0x0000000000400efb <+27>:    ret", "info");
-        addText("End of assembler dump.", "info");
-        return;
-    }
-
-    if(cmd === "x/s 0x402400") {
-        addText('0x402400:\t"Border relations with Canada have never been better."', "success");
-        return;
-    }
-
-    if(cmd === "x/s 0x40245e") {
-        addText('0x40245e:\t"flyers"', "success");
-        return;
-    }
-
-    if(cmd === "x/s 0x4024b0") {
-        addText('0x4024b0 <array.3449>:  "maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?"', "success");
-        return;
-    }
-
-    if(cmd === "break phase_1" || cmd === "b phase_1") {
+    // break phase_1
+    if(c === "break phase_1" || c === "b phase_1"){
+        state.hasBreak = true;
         addText("Breakpoint 1 at 0x400ee0", "success");
         return;
     }
 
-    if(cmd === "delete 1" || cmd === "d 1") {
+    // delete 1
+    if(c === "delete 1" || c === "d 1"){
+        state.hasBreak = false;
         addText("Deleted breakpoint 1", "info");
         return;
     }
 
+    // disas
+    if(c.startsWith("disas")){
+        if(c === "disas phase_1" || c === "disassemble phase_1"){
+            addText("Dump of assembler code for function phase_1:", "info");
+            addText("   0x0000000000400ee0 <+0>:     sub    $0x8,%rsp", "info");
+            addText("   0x0000000000400ee4 <+4>:     mov    $0x402400,%esi", "info");
+            addText("   0x0000000000400ee9 <+9>:     call   0x401338 <strings_not_equal>", "info");
+            addText("   0x0000000000400eee <+14>:    test   %eax,%eax", "info");
+            addText("   0x0000000000400ef0 <+16>:    je     0x400ef7 <phase_1+23>", "info");
+            addText("   0x0000000000400ef2 <+18>:    call   0x40143a <explode_bomb>", "info");
+            addText("   0x0000000000400ef7 <+23>:    add    $0x8,%rsp", "info");
+            addText("   0x0000000000400efb <+27>:    ret", "info");
+            addText("End of assembler dump.", "info");
+        }
+        else if(c === "disas phase_2"){
+            addText("Dump of assembler code for function phase_2:", "info");
+            addText("   0x0000000000400efc <+0>:     push   %rbp", "info");
+            addText("   0x0000000000400efd <+1>:     push   %rbx", "info");
+            addText("   0x0000000000400efe <+2>:     sub    $0x28,%rsp", "info");
+            addText("End of assembler dump.", "info");
+        }
+        else if(c === "disas phase_3"){
+            addText("Dump of assembler code for function phase_3:", "info");
+            addText("   0x0000000000400f43 <+0>:     sub    $0x18,%rsp", "info");
+            addText("End of assembler dump.", "info");
+        }
+        else if(c === "disas phase_4"){
+            addText("Dump of assembler code for function phase_4:", "info");
+            addText("   0x000000000040100c <+0>:     sub    $0x18,%rsp", "info");
+            addText("End of assembler dump.", "info");
+        }
+        else if(c === "disas phase_5"){
+            addText("Dump of assembler code for function phase_5:", "info");
+            addText("   0x0000000000401062 <+0>:     push   %rbx", "info");
+            addText("End of assembler dump.", "info");
+        }
+        else if(c === "disas phase_6"){
+            addText("Dump of assembler code for function phase_6:", "info");
+            addText("   0x00000000004010f4 <+0>:     push   %r14", "info");
+            addText("End of assembler dump.", "info");
+        }
+        return;
+    }
+
+    // x/s 查看字符串
+    if(c === "x/s 0x402400"){
+        addText('0x402400:\t"Border relations with Canada have never been better."', "success");
+        return;
+    }
+    if(c === "x/s 0x40245e"){
+        addText('0x40245e:\t"flyers"', "success");
+        return;
+    }
+    if(c === "x/s 0x4024b0"){
+        addText('0x4024b0 <array.3449>:  "maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?"', "success");
+        return;
+    }
+
+    // 无效命令
     addText(`Undefined command: "${cmd}".  Try "help".`, "error");
 }
 
-// --------------------------
-// 用户输入答案（run 之后）
-// --------------------------
-function handleUserInput(line) {
-    if(line === PHASE1_ANSWER) {
-        addText("Phase 1 defused. How about the next one?", "success");
-        switchToGDB();
-    } else {
-        addText("", "info");
-        addText("BOOM!!!", "bomb");
-        addText("The bomb has blown up.", "bomb");
-        addText("[Inferior 1 (process 1746) exited with code 010]", "info");
-        state.exited = true;
-        switchToGDB();
-    }
+// ------------------------------
+// 用户输入答案
+// ------------------------------
+function handleInput(line){
+    addText("", "info");
+    addText("BOOM!!!", "bomb");
+    addText("The bomb has blown up.", "bomb");
+    addText("[Inferior 1 (process 1746) exited with code 010]", "info");
+    state.exited = true;
+    state.isRunning = false;
+    switchGDB();
 }
 
-// --------------------------
-// 切回 GDB 模式
-// --------------------------
-function switchToGDB() {
+// ------------------------------
+// 切回 GDB
+// ------------------------------
+function switchGDB(){
     state.mode = "gdb";
     prompt.textContent = "(gdb)";
 }
 
-// --------------------------
+// ------------------------------
 // 输出工具
-// --------------------------
-function addPrompt(text) {
-    const div = document.createElement('div');
-    div.className = 'terminal-line';
-    div.innerHTML = `<span class="prompt">(gdb)</span> <span class="cmd">${text}</span>`;
-    output.appendChild(div);
+// ------------------------------
+function addPrompt(t){
+    const d = document.createElement('div');
+    d.className = 'terminal-line';
+    d.innerHTML = `<span class="prompt">(gdb)</span> <span class="cmd">${t}</span>`;
+    output.appendChild(d);
 }
-
-function addInputLine(text) {
-    const div = document.createElement('div');
-    div.className = 'terminal-line';
-    div.innerHTML = `<span class="cmd">${text}</span>`;
-    output.appendChild(div);
+function addInput(t){
+    const d = document.createElement('div');
+    d.className = 'terminal-line';
+    d.innerHTML = `<span class="cmd">${t}</span>`;
+    output.appendChild(d);
 }
-
-function addText(text, cls) {
-    const div = document.createElement('div');
-    div.className = 'terminal-line';
-    const span = document.createElement('span');
-    span.className = cls || 'info';
-    span.textContent = text;
-    div.appendChild(span);
-    output.appendChild(div);
+function addText(t,c){
+    const d = document.createElement('div');
+    d.className = 'terminal-line';
+    const s = document.createElement('span');
+    s.className = c||'info';
+    s.textContent = t;
+    d.appendChild(s);
+    output.appendChild(d);
 }
 </script>
 </body>
