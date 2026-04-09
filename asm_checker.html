@@ -1,120 +1,176 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>汇编语言语法检测</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
-.container{max-width:1000px;margin:0 auto}
-.back{display:inline-block;padding:10px 20px;background:#38bdf8;color:#111;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
-.box{background:#1e293b;border-radius:16px;padding:24px;margin-bottom:20px}
-h1{color:#38bdf8;margin-bottom:10px}
-h2{color:#a78bfa;margin:16px 0 10px;font-size:18px}
-.editor{width:100%;height:220px;background:#0f172a;color:#fff;border:1px solid #333;border-radius:8px;padding:12px;font-size:15px;resize:vertical}
-.btn{padding:12px 24px;background:#38bdf8;color:#111;border:none;border-radius:8px;font-weight:600;cursor:pointer;margin-top:10px}
-.result{margin-top:16px;padding:12px;border-radius:8px;background:#1a2435}
-.ok{color:#34d399}
-.err{color:#f87171}
-.rule{line-height:1.6;color:#cbd5e1}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汇编练习题 - Bomb Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #38bdf8;
+            color: #0f172a;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #38bdf8;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        /* 题目区域 */
+        .problem-box {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .problem-title {
+            color: #a78bfa;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        .asm-code {
+            background: #0f172a;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+        .question {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #e2e8f0;
+        }
+
+        /* 输入与按钮 */
+        .answer-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+        .check-btn {
+            padding: 10px 24px;
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* 结果提示 */
+        .result {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        .result-right {
+            background: #166534;
+            color: #bbf7d0;
+        }
+        .result-wrong {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
+
+        /* 解析 */
+        .explain {
+            margin-top: 12px;
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
 </head>
-
 <body>
+
 <div class="container">
+    <a href="select.html" class="back-btn">← 返回选择页</a>
+    <h1>汇编练习题 · Binary Bomb</h1>
 
-<a href="select.html" class="back">← 返回选择</a>
+    <div class="problem-box">
+        <div class="problem-title">phase_1 反汇编分析</div>
+        <div class="asm-code">
+0000000000400ee0 &lt;phase_1&gt;:
+400ee0: sub    $0x8,%rsp
+400ee4: mov    $0x402400,%esi
+400ee9: callq  401338 &lt;strings_not_equal&gt;
+400eee: test   %eax,%eax
+400ef0: je     400ef7
+400ef2: callq  40143a &lt;explode_bomb&gt;
+400ef7: add    $0x8,%rsp
+400efb: retq
+        </div>
 
-<div class="box">
-  <h1>汇编语言语法检测</h1>
-  <p>支持 8086 汇编基础指令、寄存器、段、END 检查</p>
-</div>
+        <div class="question">
+            问题：请输入 phase_1 正确的字符串答案（解除炸弹）：
+        </div>
 
-<div class="box">
-  <h2>✍️ 请输入汇编代码</h2>
-  <textarea id="code" class="editor" placeholder="例如：
-MOV AX, 10
-ADD BX, AX
-END START"></textarea>
-  <button class="btn" onclick="checkAsm()">🔍 开始语法检测</button>
-  <div id="result" class="result"></div>
-</div>
+        <input type="text" class="answer-input" id="answer" placeholder="请输入答案">
+        <button class="check-btn" onclick="checkAnswer()">提交答案</button>
 
-<div class="box">
-  <h2>📘 汇编简要语法（快速参考）</h2>
-  <div class="rule">
-    1. 指令格式：<strong>指令 操作数1, 操作数2</strong><br>
-    2. 常用寄存器：AX BX CX DX SI DI SP BP<br>
-    3. 段定义：CODE SEGMENT / CODE ENDS<br>
-    4. 注释以 ; 开头<br>
-    5. 程序必须以 END 结束
-  </div>
-</div>
-
+        <div class="result" id="result" style="display:none;"></div>
+        <div class="explain" id="explain" style="display:none;"></div>
+    </div>
 </div>
 
 <script>
-function checkAsm() {
-  const code = document.getElementById('code').value.trim()
-  const res = document.getElementById('result')
+    function checkAnswer() {
+        const ans = document.getElementById('answer').value.trim();
+        const result = document.getElementById('result');
+        const explain = document.getElementById('explain');
 
-  if (!code) {
-    res.innerHTML = '<div class="err">⚠️ 代码不能为空，请输入汇编指令</div>'
-    return
-  }
+        // 正确答案来自你的实验资料
+        const correct = "Border relations with Canada have never been better.";
 
-  const lines = code.split('\n').map(l => l.trim().toUpperCase())
-  const err = []
-  const ok = []
+        if (ans === correct) {
+            result.innerText = "✅ 回答正确！炸弹已解除。";
+            result.className = "result result-right";
+            explain.innerText = "解析：phase_1 通过调用 strings_not_equal 比较输入与固定字符串。字符串地址为 0x402400，使用 gdb 命令 x/s 0x402400 可直接读取。";
+        } else {
+            result.innerText = "❌ 答案错误，炸弹爆炸！";
+            result.className = "result result-wrong";
+            explain.innerText = "提示：使用 gdb 查看内存字符串：x/s 0x402400";
+        }
 
-  // 指令集合
-  const ins = ['MOV','ADD','SUB','PUSH','POP','JMP','JC','JZ','CALL','RET','INT','MOVSX','MOVZX']
-  // 寄存器
-  const reg = ['AX','BX','CX','DX','SI','DI','BP','SP','CS','DS','SS','ES']
-
-  // 逐行检查
-  lines.forEach((line, idx) => {
-    if (!line || line.startsWith(';')) return
-
-    // 检查 END
-    if (line.startsWith('END')) {
-      ok.push(`第${idx+1}行：END 正确`)
-      return
+        result.style.display = "block";
+        explain.style.display = "block";
     }
-
-    // 段
-    if (line.includes('SEGMENT') || line.includes('ENDS')) {
-      ok.push(`第${idx+1}行：段定义语法正确`)
-      return
-    }
-
-    const words = line.replace(/[,;]/g, ' ').split(/\s+/).filter(x => x)
-    if (words.length === 0) return
-
-    // 检查指令
-    if (!ins.includes(words[0])) {
-      err.push(`第${idx+1}行：未知指令「${words[0]}」`)
-    } else {
-      ok.push(`第${idx+1}行：指令「${words[0]}」合法`)
-    }
-
-    // 检查操作数是否是寄存器
-    words.slice(1).forEach(w => {
-      if (!reg.includes(w) && !/^\d+$/.test(w)) {
-        err.push(`第${idx+1}行：疑似非法操作数「${w}」`)
-      }
-    })
-  })
-
-  // 输出结果
-  let html = ''
-  if (ok.length > 0) html += '<div class="ok">' + ok.join('<br>') + '</div><br>'
-  if (err.length > 0) html += '<div class="err">' + err.join('<br>') + '</div>'
-  else html += '<div class="ok">✅ 未发现语法错误！</div>'
-
-  res.innerHTML = html
-}
 </script>
+
 </body>
 </html>
