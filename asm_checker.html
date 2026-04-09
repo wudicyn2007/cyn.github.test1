@@ -6,24 +6,20 @@
 <title>Bomb Lab GDB 模拟</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Consolas,monospace}
-body{background:linear-gradient(135deg,#0f12a2,#1e293b);color:#fff;padding:20px}
+body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
 .container{max-width:1000px;margin:0 auto}
-.back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f12a2;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
+.back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
 h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 
-.code-box{background:#0f12a2;border:1px solid #334155;border-radius:12px;padding:24px;margin-bottom:20px;display:none;}
-.code-title{color:#a78bfa;margin-bottom:12px}
-.asm-code{line-height:1.8;font-size:14px;color:#cbd5e1}
-
-.terminal{background:#000;border-radius:12px;padding:20px;height:550px;display:flex;flex-direction:column}
+.terminal{background:#000;border-radius:12px;padding:20px;height:600px;display:flex;flex-direction:column}
 .terminal-output{flex:1;overflow-y:auto;padding-bottom:10px}
 .terminal-line{margin:3px 0;color:#ccc}
 .prompt{color:#00ff00;font-weight:bold}
 .cmd{color:#fff}
 .info{color:#ccc}
 .success{color:#00ff00}
-.break{color:#00ff00}
 .error{color:#ff3333}
+.bomb{color:#ff3333;font-weight:bold}
 
 .input-line{display:flex;align-items:center;border-top:1px solid #222;padding-top:10px}
 .input-prompt{color:#00ff00;font-weight:bold;margin-right:8px}
@@ -36,25 +32,10 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 <a href="select.html" class="back-btn">← 返回选择页</a>
 <h1>Bomb Lab 汇编实验 · GDB 模拟</h1>
 
-<div class="code-box" id="codeBlock">
-<div class="code-title">phase_1 反汇编代码</div>
-<div class="asm-code">
-0000000000400ee0 &lt;phase_1&gt;:<br>
-400ee0: sub    $0x8,%rsp<br>
-400ee4: mov    $0x402400,%esi<br>
-400ee9: callq  401338 &lt;strings_not_equal&gt;<br>
-400eee: test   %eax,%eax<br>
-400ef0: je     400ef7<br>
-400ef2: callq  40143a &lt;explode_bomb&gt;<br>
-400ef7: add    $0x8,%rsp<br>
-400efb: retq
-</div>
-</div>
-
 <div class="terminal">
 <div class="terminal-output" id="output"></div>
 <div class="input-line">
-<span class="input-prompt">(gdb)</span>
+<span class="input-prompt" id="prompt">(gdb)</span>
 <input type="text" id="cmdInput" autocomplete="off">
 </div>
 </div>
@@ -64,95 +45,150 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 <script>
 const output = document.getElementById('output');
 const input = document.getElementById('cmdInput');
-const codeBlock = document.getElementById('codeBlock');
+const prompt = document.getElementById('prompt');
 
-const ANSWER = "Border relations with Canada have never been better.";
-let hasBreakpoint = false;
-let hitBreakpoint = false;
+// 正确答案（仅 phase_1 示例，可扩展全部6阶段）
+const PHASE1_ANSWER = "Border relations with Canada have never been better.";
+
+// 状态机
+let state = {
+    mode: "gdb",      // gdb / running
+    running: false,
+    exited: true
+};
 
 // 初始化
 input.focus();
+addText("GDB 模拟环境已启动", "info");
 
-// 回车执行
+// 回车事件
 input.addEventListener('keydown', e => {
     if(e.key !== 'Enter') return;
-    const cmd = input.value.trim();
-    addPrompt(cmd);
-    exec(cmd);
+    const line = input.value.trim();
     input.value = '';
+
+    if(state.mode === "gdb") {
+        addPrompt(line);
+        handleGDBCommand(line);
+    } else {
+        addInputLine(line);
+        handleUserInput(line);
+    }
     output.scrollTop = output.scrollHeight;
 });
 
-function exec(cmd) {
-    const c = cmd.trim().toLowerCase();
+// --------------------------
+// GDB 命令处理
+// --------------------------
+function handleGDBCommand(line) {
+    const cmd = line.trim().toLowerCase();
 
-    // ---------- 显示汇编代码 ----------
-    codeBlock.style.display = "block";
-
-    // ---------- 设置断点 ----------
-    if(c === 'break phase_1' || c === 'b phase_1') {
-        hasBreakpoint = true;
-        addText('Breakpoint 1 at 0x400ee0', 'break');
-        return;
-    }
-
-    // ---------- 删除断点 ----------
-    if(c === 'delete 1' || c === 'd 1') {
-        hasBreakpoint = false;
-        hitBreakpoint = false;
-        addText('Deleted breakpoint 1', 'info');
-        return;
-    }
-
-    // ---------- 运行 ----------
-    if(c === 'run' || c === 'r') {
-        hitBreakpoint = false;
-        addText('Starting program: /home/cyn/bomb/bomb', 'info');
-        addText('[Thread debugging using libthread_db enabled]', 'info');
-        addText('Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".', 'info');
-        addText('Welcome to my fiendish little bomb. You have 6 phases with', 'info');
-        addText('which to blow yourself up. Have a nice day!', 'info');
-
-        // 只有设置了断点才输出答案并暂停
-        if(hasBreakpoint) {
-            addText(ANSWER, 'info');
-            addText('\nBreakpoint 1, 0x0000000000400ee0 in phase_1 ()', 'break');
-            hitBreakpoint = true;
-        }
-        return;
-    }
-
-    // ---------- 继续执行 ----------
-    if(c === 'continue' || c === 'c') {
-        if(!hitBreakpoint) {
-            addText('No breakpoint.', 'error');
+    if(cmd === "run" || cmd === "r") {
+        if(!state.exited) {
+            addText("The program is being run.", "error");
             return;
         }
-        addText('Continuing.\n', 'info');
-        addText('Phase 1 defused. How about the next one?', 'success');
-        hitBreakpoint = false;
+        state.exited = false;
+        state.mode = "running";
+        prompt.textContent = "";
+
+        addText("Starting program: /home/cyn/bomb/bomb", "info");
+        addText("[Thread debugging using libthread_db enabled]", "info");
+        addText('Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".', "info");
+        addText("Welcome to my fiendish little bomb. You have 6 phases with", "info");
+        addText("which to blow yourself up. Have a nice day!", "info");
         return;
     }
 
-    // ---------- 查看字符串 ----------
-    if(c === 'x/s 0x402400') {
-        addText('0x402400:\t"Border relations with Canada have never been better."', 'success');
+    if(cmd === "continue" || cmd === "c") {
+        addText("The program is not being run.", "error");
         return;
     }
 
-    // ---------- 无效命令 ----------
-    addText(`Undefined command: "${cmd}". Try "help".`, 'error');
+    if(cmd.startsWith("disas")) {
+        addText("Dump of assembler code for function phase_1:", "info");
+        addText("   0x0000000000400ee0 <+0>:     sub    $0x8,%rsp", "info");
+        addText("   0x0000000000400ee4 <+4>:     mov    $0x402400,%esi", "info");
+        addText("   0x0000000000400ee9 <+9>:     call   0x401338 <strings_not_equal>", "info");
+        addText("   0x0000000000400eee <+14>:    test   %eax,%eax", "info");
+        addText("   0x0000000000400ef0 <+16>:    je     0x400ef7 <phase_1+23>", "info");
+        addText("   0x0000000000400ef2 <+18>:    call   0x40143a <explode_bomb>", "info");
+        addText("   0x0000000000400ef7 <+23>:    add    $0x8,%rsp", "info");
+        addText("   0x0000000000400efb <+27>:    ret", "info");
+        addText("End of assembler dump.", "info");
+        return;
+    }
+
+    if(cmd === "x/s 0x402400") {
+        addText('0x402400:\t"Border relations with Canada have never been better."', "success");
+        return;
+    }
+
+    if(cmd === "x/s 0x40245e") {
+        addText('0x40245e:\t"flyers"', "success");
+        return;
+    }
+
+    if(cmd === "x/s 0x4024b0") {
+        addText('0x4024b0 <array.3449>:  "maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?"', "success");
+        return;
+    }
+
+    if(cmd === "break phase_1" || cmd === "b phase_1") {
+        addText("Breakpoint 1 at 0x400ee0", "success");
+        return;
+    }
+
+    if(cmd === "delete 1" || cmd === "d 1") {
+        addText("Deleted breakpoint 1", "info");
+        return;
+    }
+
+    addText(`Undefined command: "${cmd}".  Try "help".`, "error");
 }
 
-// 输出命令行
-function addPrompt(cmd) {
+// --------------------------
+// 用户输入答案（run 之后）
+// --------------------------
+function handleUserInput(line) {
+    if(line === PHASE1_ANSWER) {
+        addText("Phase 1 defused. How about the next one?", "success");
+        switchToGDB();
+    } else {
+        addText("", "info");
+        addText("BOOM!!!", "bomb");
+        addText("The bomb has blown up.", "bomb");
+        addText("[Inferior 1 (process 1746) exited with code 010]", "info");
+        state.exited = true;
+        switchToGDB();
+    }
+}
+
+// --------------------------
+// 切回 GDB 模式
+// --------------------------
+function switchToGDB() {
+    state.mode = "gdb";
+    prompt.textContent = "(gdb)";
+}
+
+// --------------------------
+// 输出工具
+// --------------------------
+function addPrompt(text) {
     const div = document.createElement('div');
     div.className = 'terminal-line';
-    div.innerHTML = `<span class="prompt">(gdb)</span> <span class="cmd">${cmd}</span>`;
+    div.innerHTML = `<span class="prompt">(gdb)</span> <span class="cmd">${text}</span>`;
     output.appendChild(div);
 }
 
-// 输出文本
+function addInputLine(text) {
+    const div = document.createElement('div');
+    div.className = 'terminal-line';
+    div.innerHTML = `<span class="cmd">${text}</span>`;
+    output.appendChild(div);
+}
+
 function addText(text, cls) {
     const div = document.createElement('div');
     div.className = 'terminal-line';
