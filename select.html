@@ -86,77 +86,10 @@
                 padding-top: 40px;
             }
         }
-
-        /* AI 对话窗口 */
-        .ai-chat {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 360px;
-            height: 500px;
-            background: #111827;
-            border-radius: 14px;
-            box-shadow: 0 0 20px rgba(0,255,255,0.15);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 999;
-            font-family: Consolas, monospace;
-        }
-        .chat-head {
-            padding: 12px;
-            background: #0f172a;
-            color: #00e0ff;
-            font-weight: bold;
-            text-align: center;
-        }
-        .chat-body {
-            flex: 1;
-            padding: 12px;
-            overflow-y: auto;
-            color: #fff;
-        }
-        .chat-input {
-            display: flex;
-            border-top: 1px solid #333;
-        }
-        .chat-input input {
-            flex: 1;
-            padding: 12px;
-            background: #1e293b;
-            color: #fff;
-            border: none;
-            outline: none;
-        }
-        .chat-input button {
-            padding: 0 16px;
-            background: #00e0ff;
-            color: #000;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-        }
-        .msg {
-            margin: 8px 0;
-            padding: 8px 10px;
-            border-radius: 6px;
-        }
-        .user-msg {
-            background: #2563eb;
-            text-align: right;
-        }
-        .bot-msg {
-            background: #0d9488;
-            text-align: left;
-        }
-        .error-msg {
-            background: #dc2626;
-            text-align: left;
-        }
     </style>
 </head>
 <body>
-
+    <!-- 返回欢迎界面按钮 -->
     <a href="index.html" class="back-btn">← 返回欢迎界面</a>
 
     <h2 class="title">请选择学习系统</h2>
@@ -177,80 +110,5 @@
             <p>知识学习 | 发展历程</p>
         </div>
     </div>
-
-    <!-- AI 对话窗口 -->
-    <div class="ai-chat">
-        <div class="chat-head">AI 学习助手（DeepSeek）</div>
-        <div class="chat-body" id="chatBody"></div>
-        <div class="chat-input">
-            <input id="chatInput" placeholder="输入问题...">
-            <button onclick="sendMessage()">发送</button>
-        </div>
-    </div>
-
-    <script>
-        // ====================== 只需要改这里 ======================
-        const API_KEY = "";
-        // ==========================================================
-
-        const API_URL = "https://api.deepseek.com/v1/chat/completions";
-        const MODEL_NAME = "deepseek-chat";
-
-        let messages = [
-            { role: "system", content: "你是一个学习助手，回答简洁、专业、有耐心。" }
-        ];
-
-        async function sendMessage() {
-            const input = document.getElementById("chatInput");
-            const text = input.value.trim();
-            if (!text) return;
-
-            addMessage(text, "user");
-            input.value = "";
-            messages.push({ role: "user", content: text });
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + API_KEY
-                    },
-                    body: JSON.stringify({
-                        model: MODEL_NAME,
-                        messages: messages,
-                        temperature: 0.3,
-                        stream: false
-                    })
-                });
-
-                if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(err.error?.message || "请求失败");
-                }
-
-                const data = await response.json();
-                const reply = data.choices[0].message.content;
-                addMessage(reply, "bot");
-                messages.push({ role: "assistant", content: reply });
-
-            } catch (e) {
-                addMessage("错误：" + e.message, "error");
-            }
-        }
-
-        function addMessage(text, role) {
-            const body = document.getElementById("chatBody");
-            const div = document.createElement("div");
-            div.className = "msg";
-            if (role === "user") div.classList.add("user-msg");
-            else if (role === "bot") div.classList.add("bot-msg");
-            else div.classList.add("error-msg");
-            div.textContent = text;
-            body.appendChild(div);
-            body.scrollTop = body.scrollHeight;
-        }
-    </script>
-
 </body>
 </html>
