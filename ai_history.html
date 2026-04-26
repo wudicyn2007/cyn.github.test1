@@ -6,31 +6,64 @@
 <title>人工智能发展史 · 进化与知识图谱</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
+body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px;min-height:100vh}
 .container{max-width:1200px;margin:0 auto}
-.back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
-h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
+.back-btn{display:inline-block;padding:8px 20px;background:linear-gradient(135deg,#38bdf8,#818cf8);color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px;transition:all 0.3s}
+.back-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(56,189,248,0.4)}
+h1{background:linear-gradient(90deg,#38bdf8,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:20px;font-size:28px;font-weight:700}
 
-.tabs{display:flex;gap:10px;justify:center;margin-bottom:20px}
-.tab{padding:10px 24px;background:#1e293b;border-radius:10px;cursor:pointer}
-.tab.active{background:#3b82f6}
+.tabs{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
+.tab{padding:10px 28px;background:#1e293b;border-radius:25px;cursor:pointer;font-weight:500;transition:all 0.3s;border:2px solid transparent}
+.tab:hover{border-color:#38bdf8}
+.tab.active{background:linear-gradient(135deg,#38bdf8,#818cf8);color:#0f172a;font-weight:600}
 
-.tab-content{display:none;background:#1e293b;border-radius:16px;padding:24px}
+.tab-content{display:none;background:rgba(30,41,59,0.8);backdrop-filter:blur(10px);border-radius:20px;padding:24px;border:1px solid rgba(255,255,255,0.1)}
 .tab-content.active{display:block}
 
-.timeline-container{position:relative;width:100%;height:650px;background:#0f172a;border-radius:12px;overflow:hidden}
-.svg-wrapper{width:100%;height:100%}
+.timeline-container{position:relative;width:100%;height:680px;background:linear-gradient(180deg,#0f172a,#1a2744);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)}
+.timeline-bg{position:absolute;width:100%;height:100%;background-image:radial-gradient(circle at 20% 30%,rgba(56,189,248,0.1) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(167,139,250,0.1) 0%,transparent 50%)}
+.svg-wrapper{width:100%;height:100%;position:relative;z-index:1}
 
-.node{fill:#1e293b;stroke:#38bdf8;stroke-width:2;rx:12;ry:12;cursor:move}
-.node-text{fill:#fff;font-size:12px;text-anchor:middle}
-.node-year{fill:#94a3b8;font-size:10px;text-anchor:middle}
-.edge{stroke:#64748b;stroke-width:1.5;fill:none}
+.node{stroke-width:2.5;rx:14;ry:14;cursor:move;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));transition:all 0.3s}
+.node:hover{filter:drop-shadow(0 6px 16px rgba(0,0,0,0.5));transform:scale(1.05)}
+.node-regression{fill:url(#gradRegression);stroke:#38bdf8}
+.node-classification{fill:url(#gradClassification);stroke:#a78bfa}
+.node-neural{fill:url(#gradNeural);stroke:#f472b6}
+.node-clustering{fill:url(#gradClustering);stroke:#34d399}
+.node-dim{fill:url(#gradDim);stroke:#fbbf24}
+.node-rl{fill:url(#gradRL);stroke:#fb923c}
+.node-text{fill:#fff;font-size:12px;text-anchor:middle;font-weight:600}
+.node-year{fill:rgba(255,255,255,0.7);font-size:10px;text-anchor:middle}
+.edge{stroke-width:2;fill:none;opacity:0.6}
 
-.knowledge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.knowledge-card{background:#0f172a;border-radius:10px;padding:12px;border-left:3px solid #38bdf8}
-.knowledge-card h3{font-size:14px;color:#fff;margin-bottom:6px}
-.level-bar{height:18px;background:#334155;border-radius:9px;overflow:hidden}
-.level-fill{height:100%;background:#38bdf8;color:#fff;font-size:11px;display:flex;align-items:center;padding-left:8px}
+.knowledge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.knowledge-card{background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.1);transition:all 0.3s;position:relative;overflow:hidden}
+.knowledge-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
+.knowledge-card.regression::before{background:linear-gradient(180deg,#38bdf8,#0ea5e9)}
+.knowledge-card.classification::before{background:linear-gradient(180deg,#a78bfa,#818cf8)}
+.knowledge-card.neural::before{background:linear-gradient(180deg,#f472b6,#ec4899)}
+.knowledge-card.clustering::before{background:linear-gradient(180deg,#34d399,#10b981)}
+.knowledge-card.dimensionality::before{background:linear-gradient(180deg,#fbbf24,#f59e0b)}
+.knowledge-card.rl::before{background:linear-gradient(180deg,#fb923c,#f97316)}
+.knowledge-card:hover{transform:translateY(-4px);box-shadow:0 8px 25px rgba(0,0,0,0.3);border-color:rgba(255,255,255,0.2)}
+.knowledge-card h3{font-size:15px;color:#fff;margin-bottom:8px;font-weight:600;display:flex;align-items:center;gap:8px}
+.knowledge-card h3 .icon{font-size:18px}
+.level-bar{height:20px;background:#1e293b;border-radius:10px;overflow:hidden;margin-top:8px}
+.level-fill{height:100%;border-radius:10px;color:#fff;font-size:11px;display:flex;align-items:center;padding-left:10px;font-weight:500}
+.level-basic{background:linear-gradient(90deg,#38bdf8,#0ea5e9)}
+.level-intermediate{background:linear-gradient(90deg,#a78bfa,#818cf8)}
+.level-advanced{background:linear-gradient(90deg,#f472b6,#ec4899)}
+.level-expert{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-bottom:16px;padding:12px;background:rgba(15,23,42,0.6);border-radius:12px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:13px}
+.legend-dot{width:12px;height:12px;border-radius:50%}
+.legend-dot.regression{background:#38bdf8}
+.legend-dot.classification{background:#a78bfa}
+.legend-dot.neural{background:#f472b6}
+.legend-dot.clustering{background:#34d399}
+.legend-dot.dimensionality{background:#fbbf24}
+.legend-dot.rl{background:#fb923c}
 </style>
 </head>
 
@@ -46,8 +79,45 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 
 <div class="tab-content active" id="evolution-tab">
 <div class="timeline-container">
-<svg class="svg-wrapper" viewBox="0 0 1000 650">
+<div class="timeline-bg"></div>
+<svg class="svg-wrapper" viewBox="0 0 1000 680">
 <defs>
+<linearGradient id="gradRegression" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#1e3a5f"/>
+<stop offset="100%" style="stop-color:#0f2744"/>
+</linearGradient>
+<linearGradient id="gradClassification" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#3b2d6b"/>
+<stop offset="100%" style="stop-color:#1e1a4a"/>
+</linearGradient>
+<linearGradient id="gradNeural" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#5c2a4a"/>
+<stop offset="100%" style="stop-color:#3a1a2e"/>
+</linearGradient>
+<linearGradient id="gradClustering" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#1a4a3a"/>
+<stop offset="100%" style="stop-color:#0f2e24"/>
+</linearGradient>
+<linearGradient id="gradDim" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#4a3a1a"/>
+<stop offset="100%" style="stop-color:#2e2410"/>
+</linearGradient>
+<linearGradient id="gradRL" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#4a2a1a"/>
+<stop offset="100%" style="stop-color:#2e1a10"/>
+</linearGradient>
+<linearGradient id="edgeGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#38bdf8"/>
+<stop offset="100%" style="stop-color:#818cf8"/>
+</linearGradient>
+<linearGradient id="edgeGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#a78bfa"/>
+<stop offset="100%" style="stop-color:#f472b6"/>
+</linearGradient>
+<linearGradient id="edgeGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#34d399"/>
+<stop offset="100%" style="stop-color:#38bdf8"/>
+</linearGradient>
 <marker id="arrow" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
 <polygon points="0 0,8 2.5,0 5" fill="#64748b" />
 </marker>
@@ -70,109 +140,109 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 <g id="nodes">
 
 <g class="draggable" data-id="n1" transform="translate(150,100)">
-<rect class="node" width="100" height="45" x="-50" y="-22"/>
+<rect class="node node-regression" width="100" height="45" x="-50" y="-22"/>
 <text class="node-text" x="0" y="5">线性回归</text>
 <text class="node-year" x="0" y="-12">1805</text>
 </g>
 
 <g class="draggable" data-id="n2" transform="translate(280,80)">
-<rect class="node" width="100" height="40" x="-50" y="-20"/>
+<rect class="node node-regression" width="100" height="40" x="-50" y="-20"/>
 <text class="node-text" x="0" y="5">多项式回归</text>
 <text class="node-year" x="0" y="-10">1815</text>
 </g>
 
 <g class="draggable" data-id="n3" transform="translate(280,150)">
-<rect class="node" width="70" height="40" x="-35" y="-20"/>
+<rect class="node node-regression" width="70" height="40" x="-35" y="-20"/>
 <text class="node-text" x="0" y="5">Ridge</text>
 <text class="node-year" x="0" y="-10">1970</text>
 </g>
 
 <g class="draggable" data-id="n4" transform="translate(150,180)">
-<rect class="node" width="70" height="40" x="-35" y="-20"/>
+<rect class="node node-regression" width="70" height="40" x="-35" y="-20"/>
 <text class="node-text" x="0" y="5">Lasso</text>
 <text class="node-year" x="0" y="-10">1996</text>
 </g>
 
 <g class="draggable" data-id="n5" transform="translate(420,100)">
-<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<rect class="node node-classification" width="60" height="40" x="-30" y="-20"/>
 <text class="node-text" x="0" y="5">KNN</text>
 <text class="node-year" x="0" y="-10">1951</text>
 </g>
 
 <g class="draggable" data-id="n6" transform="translate(530,100)">
-<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<rect class="node node-classification" width="60" height="40" x="-30" y="-20"/>
 <text class="node-text" x="0" y="5">SVM</text>
 <text class="node-year" x="0" y="-10">1995</text>
 </g>
 
 <g class="draggable" data-id="n7" transform="translate(420,200)">
-<rect class="node" width="80" height="40" x="-40" y="-20"/>
+<rect class="node node-classification" width="80" height="40" x="-40" y="-20"/>
 <text class="node-text" x="0" y="5">逻辑回归</text>
 <text class="node-year" x="0" y="-10">1958</text>
 </g>
 
 <g class="draggable" data-id="n8" transform="translate(530,200)">
-<rect class="node" width="80" height="40" x="-40" y="-20"/>
+<rect class="node node-classification" width="80" height="40" x="-40" y="-20"/>
 <text class="node-text" x="0" y="5">决策树</text>
 <text class="node-year" x="0" y="-10">1986</text>
 </g>
 
 <g class="draggable" data-id="n9" transform="translate(150,300)">
-<rect class="node" width="70" height="45" x="-35" y="-22"/>
+<rect class="node node-neural" width="70" height="45" x="-35" y="-22"/>
 <text class="node-text" x="0" y="5">CNN</text>
 <text class="node-year" x="0" y="-12">1998</text>
 </g>
 
 <g class="draggable" data-id="n10" transform="translate(280,300)">
-<rect class="node" width="100" height="45" x="-50" y="-22"/>
+<rect class="node node-neural" width="100" height="45" x="-50" y="-22"/>
 <text class="node-text" x="0" y="5">神经网络</text>
 <text class="node-year" x="0" y="-12">1986</text>
 </g>
 
 <g class="draggable" data-id="n11" transform="translate(420,300)">
-<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<rect class="node node-neural" width="60" height="40" x="-30" y="-20"/>
 <text class="node-text" x="0" y="5">RNN</text>
 <text class="node-year" x="0" y="-10">1986</text>
 </g>
 
 <g class="draggable" data-id="n12" transform="translate(550,300)">
-<rect class="node" width="90" height="45" x="-45" y="-22"/>
+<rect class="node node-neural" width="90" height="45" x="-45" y="-22"/>
 <text class="node-text" x="0" y="5">Attention</text>
 <text class="node-year" x="0" y="-12">2014</text>
 </g>
 
 <g class="draggable" data-id="n13" transform="translate(180,420)">
-<rect class="node" width="70" height="45" x="-35" y="-22"/>
+<rect class="node node-dim" width="70" height="45" x="-35" y="-22"/>
 <text class="node-text" x="0" y="5">PCA</text>
 <text class="node-year" x="0" y="-12">1901</text>
 </g>
 
 <g class="draggable" data-id="n14" transform="translate(320,420)">
-<rect class="node" width="60" height="40" x="-30" y="-20"/>
+<rect class="node node-dim" width="60" height="40" x="-30" y="-20"/>
 <text class="node-text" x="0" y="5">LDA</text>
 <text class="node-year" x="0" y="-10">1936</text>
 </g>
 
 <g class="draggable" data-id="n15" transform="translate(450,420)">
-<rect class="node" width="70" height="40" x="-35" y="-20"/>
+<rect class="node node-dim" width="70" height="40" x="-35" y="-20"/>
 <text class="node-text" x="0" y="5">t-SNE</text>
 <text class="node-year" x="0" y="-10">2008</text>
 </g>
 
 <g class="draggable" data-id="n16" transform="translate(180,520)">
-<rect class="node" width="90" height="45" x="-45" y="-22"/>
+<rect class="node node-clustering" width="90" height="45" x="-45" y="-22"/>
 <text class="node-text" x="0" y="5">K-Means</text>
 <text class="node-year" x="0" y="-12">1957</text>
 </g>
 
 <g class="draggable" data-id="n17" transform="translate(330,520)">
-<rect class="node" width="80" height="40" x="-40" y="-20"/>
+<rect class="node node-clustering" width="80" height="40" x="-40" y="-20"/>
 <text class="node-text" x="0" y="5">DBSCAN</text>
 <text class="node-year" x="0" y="-10">1996</text>
 </g>
 
 <g class="draggable" data-id="n18" transform="translate(180,600)">
-<rect class="node" width="100" height="45" x="-50" y="-22"/>
+<rect class="node node-rl" width="100" height="45" x="-50" y="-22"/>
 <text class="node-text" x="0" y="5">Q-Learning</text>
 <text class="node-year" x="0" y="-12">1989</text>
 </g>
@@ -183,23 +253,31 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 </div>
 
 <div class="tab-content" id="knowledge-tab">
+<div class="legend">
+<div class="legend-item"><span class="legend-dot regression"></span>回归算法</div>
+<div class="legend-item"><span class="legend-dot classification"></span>分类算法</div>
+<div class="legend-item"><span class="legend-dot neural"></span>神经网络</div>
+<div class="legend-item"><span class="legend-dot clustering"></span>聚类算法</div>
+<div class="legend-item"><span class="legend-dot dimensionality"></span>降维技术</div>
+<div class="legend-item"><span class="legend-dot rl"></span>强化学习</div>
+</div>
 <div class="knowledge-grid">
 
-<div class="knowledge-card"><h3>线性回归</h3><div class="level-bar"><div class="level-fill" style="width:20%">基础</div></div></div>
-<div class="knowledge-card"><h3>多项式回归</h3><div class="level-bar"><div class="level-fill" style="width:20%">基础</div></div></div>
-<div class="knowledge-card"><h3>Ridge回归</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card"><h3>Lasso回归</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card"><h3>K近邻</h3><div class="level-bar"><div class="level-fill" style="width:20%">基础</div></div></div>
-<div class="knowledge-card"><h3>SVM</h3><div class="level-bar"><div class="level-fill" style="width:60%">高级</div></div></div>
-<div class="knowledge-card"><h3>逻辑回归</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card"><h3>决策树</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card"><h3>CNN</h3><div class="level-bar"><div class="level-fill" style="width:80%">深度</div></div></div>
-<div class="knowledge-card"><h3>RNN</h3><div class="level-bar"><div class="level-fill" style="width:80%">深度</div></div></div>
-<div class="knowledge-card"><h3>Attention</h3><div class="level-bar"><div class="level-fill" style="width:80%">深度</div></div></div>
-<div class="knowledge-card"><h3>PCA</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card"><h3>K-Means</h3><div class="level-bar"><div class="level-fill" style="width:20%">基础</div></div></div>
-<div class="knowledge-card"><h3>DBSCAN</h3><div class="level-bar"><div class="level-fill" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card"><h3>Q-Learning</h3><div class="level-bar"><div class="level-fill" style="width:100%">专家</div></div></div>
+<div class="knowledge-card regression"><h3>📊 线性回归</h3><div class="level-bar"><div class="level-fill level-basic" style="width:20%">基础</div></div></div>
+<div class="knowledge-card regression"><h3>📈 多项式回归</h3><div class="level-bar"><div class="level-fill level-basic" style="width:20%">基础</div></div></div>
+<div class="knowledge-card regression"><h3>📉 Ridge回归</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card regression"><h3>📉 Lasso回归</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card classification"><h3>🎯 K近邻</h3><div class="level-bar"><div class="level-fill level-basic" style="width:20%">基础</div></div></div>
+<div class="knowledge-card classification"><h3>🔮 SVM</h3><div class="level-bar"><div class="level-fill level-advanced" style="width:60%">高级</div></div></div>
+<div class="knowledge-card classification"><h3>⚖️ 逻辑回归</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card classification"><h3>🌳 决策树</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card neural"><h3>🧠 CNN</h3><div class="level-bar"><div class="level-fill level-advanced" style="width:80%">深度</div></div></div>
+<div class="knowledge-card neural"><h3>🔗 RNN</h3><div class="level-bar"><div class="level-fill level-advanced" style="width:80%">深度</div></div></div>
+<div class="knowledge-card neural"><h3>✨ Attention</h3><div class="level-bar"><div class="level-fill level-advanced" style="width:80%">深度</div></div></div>
+<div class="knowledge-card dimensionality"><h3>📐 PCA</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card clustering"><h3>🎪 K-Means</h3><div class="level-bar"><div class="level-fill level-basic" style="width:20%">基础</div></div></div>
+<div class="knowledge-card clustering"><h3>🔵 DBSCAN</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
+<div class="knowledge-card rl"><h3>🎮 Q-Learning</h3><div class="level-bar"><div class="level-fill level-expert" style="width:100%">专家</div></div></div>
 
 </div>
 </div>
@@ -218,6 +296,15 @@ function show(t){
     else{document.getElementById('evolution-tab').classList.add('active');tabs[1].classList.add('active')}
 }
 
+const nodeColors = {
+    'n1':'#38bdf8','n2':'#38bdf8','n3':'#38bdf8','n4':'#38bdf8',
+    'n5':'#a78bfa','n6':'#a78bfa','n7':'#a78bfa','n8':'#a78bfa',
+    'n9':'#f472b6','n10':'#f472b6','n11':'#f472b6','n12':'#f472b6',
+    'n13':'#fbbf24','n14':'#fbbf24','n15':'#fbbf24',
+    'n16':'#34d399','n17':'#34d399',
+    'n18':'#fb923c'
+};
+
 const connections = [
   { e: 'e1', from: 'n1', to: 'n2' },
   { e: 'e2', from: 'n1', to: 'n3' },
@@ -232,21 +319,34 @@ const connections = [
   { e: 'e11', from: 'n13', to: 'n14' },
 ];
 
+function createEdges() {
+    const edgesGroup = document.getElementById('edges');
+    edgesGroup.innerHTML = '';
+    connections.forEach(c => {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('id', c.e);
+        line.setAttribute('stroke-width', '2');
+        line.setAttribute('opacity', '0.5');
+        edgesGroup.appendChild(line);
+    });
+}
+
 function updateEdges() {
-  connections.forEach(c => {
-    const from = document.querySelector(`[data-id="${c.from}"]`);
-    const to = document.querySelector(`[data-id="${c.to}"]`);
-    const edge = document.getElementById(c.e);
-    if (!from || !to || !edge) return;
+    connections.forEach(c => {
+        const from = document.querySelector(`[data-id="${c.from}"]`);
+        const to = document.querySelector(`[data-id="${c.to}"]`);
+        const edge = document.getElementById(c.e);
+        if (!from || !to || !edge) return;
 
-    const mFrom = from.transform.baseVal[0].matrix;
-    const mTo = to.transform.baseVal[0].matrix;
+        const mFrom = from.transform.baseVal[0].matrix;
+        const mTo = to.transform.baseVal[0].matrix;
 
-    edge.setAttribute('x1', mFrom.e);
-    edge.setAttribute('y1', mFrom.f);
-    edge.setAttribute('x2', mTo.e);
-    edge.setAttribute('y2', mTo.f);
-  });
+        edge.setAttribute('x1', mFrom.e);
+        edge.setAttribute('y1', mFrom.f);
+        edge.setAttribute('x2', mTo.e);
+        edge.setAttribute('y2', mTo.f);
+        edge.setAttribute('stroke', nodeColors[c.from]);
+    });
 }
 
 let drag = null, dx=0, dy=0;
@@ -268,7 +368,7 @@ document.onmousemove = e=>{
 };
 
 document.onmouseup = ()=>{ drag=null; }
-window.onload = updateEdges;
+window.onload = ()=>{ createEdges(); updateEdges(); };
 </script>
 </body>
 </html>
