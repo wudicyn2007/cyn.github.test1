@@ -77,16 +77,15 @@
         .purple { border-left: 6px solid #a78bfa; }
         .green { border-left: 6px solid #34d399; }
 
-        /* AI 聊天窗口样式 */
         .ai-chat {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 350px;
-            height: 500px;
+            width: 360px;
+            height: 520px;
             background: #1e293b;
-            border-radius: 16px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-radius: 18px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -101,9 +100,9 @@
         }
         .chat-body {
             flex: 1;
-            padding: 14px;
+            padding: 16px;
             overflow-y: auto;
-            font-size: 14px;
+            font-size: 15px;
             line-height: 1.5;
         }
         .chat-input {
@@ -112,14 +111,15 @@
         }
         .chat-input input {
             flex: 1;
-            padding: 12px;
+            padding: 14px;
             background: #1e293b;
             color: white;
             border: none;
             outline: none;
+            font-size: 14px;
         }
         .chat-input button {
-            padding: 0 16px;
+            padding: 0 18px;
             background: #38bdf8;
             color: #0f172a;
             border: none;
@@ -128,8 +128,8 @@
         }
         .msg {
             margin-bottom: 10px;
-            padding: 8px 12px;
-            border-radius: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
             max-width: 80%;
         }
         .user-msg {
@@ -153,85 +153,75 @@
     </style>
 </head>
 <body>
-    <!-- 返回欢迎界面按钮 -->
-    <a href="index.html" class="back-btn">← 返回欢迎界面</a>
 
-    <h2 class="title">请选择学习系统</h2>
+<a href="index.html" class="back-btn">← 返回欢迎界面</a>
+<h2 class="title">请选择学习系统</h2>
 
-    <div class="card-box">
-        <div class="card blue" onclick="window.location.href='asm_checker.html'">
-            <h3>汇编语言练习题</h3>
-            <p>语法校验 | 学习辅助</p>
-        </div>
-
-        <div class="card purple" onclick="window.location.href='computer_structure.html'">
-            <h3>计算机系统逻辑结构</h3>
-            <p>结构学习 | 原理讲解</p>
-        </div>
-
-        <div class="card green" onclick="window.location.href='ai_history.html'">
-            <h3>人工智能发展史</h3>
-            <p>知识学习 | 发展历程</p>
-        </div>
+<div class="card-box">
+    <div class="card blue" onclick="window.location.href='asm_checker.html'">
+        <h3>汇编语言练习题</h3>
+        <p>语法校验 | 学习辅助</p>
     </div>
-
-    <!-- AI 聊天窗口 -->
-    <div class="ai-chat">
-        <div class="chat-header">AI 学习助手</div>
-        <div class="chat-body" id="chatBody"></div>
-        <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="输入问题...">
-            <button onclick="sendMessage()">发送</button>
-        </div>
+    <div class="card purple" onclick="window.location.href='computer_structure.html'">
+        <h3>计算机系统逻辑结构</h3>
+        <p>结构学习 | 原理讲解</p>
     </div>
+    <div class="card green" onclick="window.location.href='ai_history.html'">
+        <h3>人工智能发展史</h3>
+        <p>知识学习 | 发展历程</p>
+    </div>
+</div>
 
-    <script src="config.js"></script>
-    <script>
-        const API_URL = "https://api.deepseek.com/v1/chat/completions";
-        const MODEL = "deepseek-chat";
+<div class="ai-chat">
+    <div class="chat-header">AI 学习助手</div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="输入问题...">
+        <button onclick="sendMessage()">发送</button>
+    </div>
+</div>
 
-        let messages = [{ role: "system", content: "你是一个计算机学习助手，耐心回答问题。" }];
+<script>
+async function sendMessage() {
+    const input = document.getElementById("chatInput");
+    const text = input.value.trim();
+    if (!text) return;
 
-        async function sendMessage() {
-            const input = document.getElementById("chatInput");
-            const text = input.value.trim();
-            if (!text) return;
+    addMsg(text, "user");
+    input.value = "";
 
-            addMsg(text, "user");
-            input.value = "";
-            messages.push({ role: "user", content: text });
+    try {
+        const res = await fetch("https://api.aiprocess.app/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    { role: "system", content: "你是专业的计算机学习助手，回答简洁、准确、耐心。" },
+                    { role: "user", content: text }
+                ],
+                stream: false
+            })
+        });
 
-            try {
-                const res = await fetch(API_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + DEEPSEEK_KEY
-                    },
-                    body: JSON.stringify({
-                        model: MODEL,
-                        messages: messages,
-                        temperature: 0.3
-                    })
-                });
+        const data = await res.json();
+        const reply = data.choices[0].message.content;
+        addMsg(reply, "bot");
+    } catch (err) {
+        addMsg("AI 服务繁忙，请稍后再试~", "bot");
+    }
+}
 
-                const data = await res.json();
-                const reply = data.choices[0].message.content;
-                addMsg(reply, "bot");
-                messages.push({ role: "assistant", content: reply });
-            } catch (err) {
-                addMsg("AI 服务出错，请检查密钥或网络", "bot");
-            }
-        }
-
-        function addMsg(text, role) {
-            const body = document.getElementById("chatBody");
-            const div = document.createElement("div");
-            div.className = "msg " + (role === "user" ? "user-msg" : "bot-msg");
-            div.textContent = text;
-            body.appendChild(div);
-            body.scrollTop = body.scrollHeight;
-        }
-    </script>
+function addMsg(text, role) {
+    const body = document.getElementById("chatBody");
+    const div = document.createElement("div");
+    div.className = "msg " + (role === "user" ? "user-msg" : "bot-msg");
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+}
+</script>
 </body>
 </html>
