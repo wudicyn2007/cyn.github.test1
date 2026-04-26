@@ -81,11 +81,11 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 360px;
-            height: 520px;
+            width: 350px;
+            height: 500px;
             background: #1e293b;
-            border-radius: 18px;
-            box-shadow: 0 0 25px rgba(0,0,0,0.4);
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -100,9 +100,9 @@
         }
         .chat-body {
             flex: 1;
-            padding: 16px;
+            padding: 14px;
             overflow-y: auto;
-            font-size: 15px;
+            font-size: 14px;
             line-height: 1.5;
         }
         .chat-input {
@@ -111,15 +111,14 @@
         }
         .chat-input input {
             flex: 1;
-            padding: 14px;
+            padding: 12px;
             background: #1e293b;
             color: white;
             border: none;
             outline: none;
-            font-size: 14px;
         }
         .chat-input button {
-            padding: 0 18px;
+            padding: 0 16px;
             background: #38bdf8;
             color: #0f172a;
             border: none;
@@ -128,8 +127,8 @@
         }
         .msg {
             margin-bottom: 10px;
-            padding: 10px 14px;
-            border-radius: 12px;
+            padding: 8px 12px;
+            border-radius: 10px;
             max-width: 80%;
         }
         .user-msg {
@@ -153,75 +152,96 @@
     </style>
 </head>
 <body>
+    <!-- 返回欢迎界面按钮 -->
+    <a href="index.html" class="back-btn">← 返回欢迎界面</a>
 
-<a href="index.html" class="back-btn">← 返回欢迎界面</a>
-<h2 class="title">请选择学习系统</h2>
+    <h2 class="title">请选择学习系统</h2>
 
-<div class="card-box">
-    <div class="card blue" onclick="window.location.href='asm_checker.html'">
-        <h3>汇编语言练习题</h3>
-        <p>语法校验 | 学习辅助</p>
+    <div class="card-box">
+        <div class="card blue" onclick="window.location.href='asm_checker.html'">
+            <h3>汇编语言练习题</h3>
+            <p>语法校验 | 学习辅助</p>
+        </div>
+
+        <div class="card purple" onclick="window.location.href='computer_structure.html'">
+            <h3>计算机系统逻辑结构</h3>
+            <p>结构学习 | 原理讲解</p>
+        </div>
+
+        <div class="card green" onclick="window.location.href='ai_history.html'">
+            <h3>人工智能发展史</h3>
+            <p>知识学习 | 发展历程</p>
+        </div>
     </div>
-    <div class="card purple" onclick="window.location.href='computer_structure.html'">
-        <h3>计算机系统逻辑结构</h3>
-        <p>结构学习 | 原理讲解</p>
+
+    <!-- AI 聊天窗口 -->
+    <div class="ai-chat">
+        <div class="chat-header">AI 学习助手</div>
+        <div class="chat-body" id="chatBody"></div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="输入问题...">
+            <button onclick="sendMessage()">发送</button>
+        </div>
     </div>
-    <div class="card green" onclick="window.location.href='ai_history.html'">
-        <h3>人工智能发展史</h3>
-        <p>知识学习 | 发展历程</p>
-    </div>
-</div>
 
-<div class="ai-chat">
-    <div class="chat-header">AI 学习助手</div>
-    <div class="chat-body" id="chatBody"></div>
-    <div class="chat-input">
-        <input type="text" id="chatInput" placeholder="输入问题...">
-        <button onclick="sendMessage()">发送</button>
-    </div>
-</div>
+    <script>
+        // 1. 本地问答库（降级备用）
+        const qaList = [
+            { q: "你好", a: "你好！我是你的学习助手，有什么问题可以问我~" },
+            { q: "汇编", a: "汇编语言是一种低级语言，直接与硬件交互，和机器指令一一对应。" },
+            { q: "Bomb Lab", a: "Bomb Lab是经典的逆向工程实验，通过反汇编找到正确输入来‘拆弹’。" },
+            { q: "phase1", a: "phase1通常是字符串比较关卡，需要找到程序期望的特定字符串。" },
+            { q: "计算机系统", a: "计算机系统由硬件、操作系统、编译器等多个层次组成。" },
+            { q: "谢谢", a: "不客气！祝你学习顺利😊" }
+        ];
 
-<script>
-async function sendMessage() {
-    const input = document.getElementById("chatInput");
-    const text = input.value.trim();
-    if (!text) return;
+        // 2. 尝试调用外部AI接口（这里用一个公开可用的接口，你也可以换成其他）
+        const API_URL = "https://api.nihaoworld.com/api/chat";
 
-    addMsg(text, "user");
-    input.value = "";
+        async function sendMessage() {
+            const input = document.getElementById("chatInput");
+            const text = input.value.trim();
+            if (!text) return;
 
-    try {
-        const res = await fetch("https://api.aiprocess.app/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                model: "gpt-3.5-turbo",
-                messages: [
-                    { role: "system", content: "你是专业的计算机学习助手，回答简洁、准确、耐心。" },
-                    { role: "user", content: text }
-                ],
-                stream: false
-            })
-        });
+            addMsg(text, "user");
+            input.value = "";
 
-        const data = await res.json();
-        const reply = data.choices[0].message.content;
-        addMsg(reply, "bot");
-    } catch (err) {
-        addMsg("AI 服务繁忙，请稍后再试~", "bot");
-    }
-}
+            // 先尝试调用外部AI
+            try {
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: text })
+                });
 
-function addMsg(text, role) {
-    const body = document.getElementById("chatBody");
-    const div = document.createElement("div");
-    div.className = "msg " + (role === "user" ? "user-msg" : "bot-msg");
-    div.textContent = text;
-    body.appendChild(div);
-    body.scrollTop = body.scrollHeight;
-}
-</script>
+                if (res.ok) {
+                    const data = await res.json();
+                    addMsg(data.reply || "外部AI响应成功，但格式异常", "bot");
+                    return; // 外部成功，结束流程
+                } else {
+                    throw new Error("外部接口失败");
+                }
+            } catch (err) {
+                // 外部失败，自动降级到本地问答库
+                let answer = "我目前只能回答汇编、计算机系统相关问题哦~";
+                for (let item of qaList) {
+                    if (text.includes(item.q)) {
+                        answer = item.a;
+                        break;
+                    }
+                }
+                setTimeout(() => addMsg(answer, "bot"), 300);
+            }
+        }
+
+        function addMsg(text, role) {
+            const body = document.getElementById("chatBody");
+            const div = document.createElement("div");
+            div.className = "msg " + (role === "user" ? "user-msg" : "bot-msg");
+            div.textContent = text;
+            body.appendChild(div);
+            body.scrollTop = body.scrollHeight;
+        }
+    </script>
 </body>
 </html>
