@@ -86,10 +86,18 @@
             background: #1e293b;
             border-radius: 16px;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            display: flex;
+            display: none;
             flex-direction: column;
             overflow: hidden;
             z-index: 999;
+            animation: slideUp 0.3s ease;
+        }
+        .ai-chat.active {
+            display: flex;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .chat-header {
             padding: 14px;
@@ -97,6 +105,20 @@
             color: #38bdf8;
             font-weight: bold;
             text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+        .chat-close:hover {
+            color: #fff;
         }
         .chat-body {
             flex: 1;
@@ -124,6 +146,40 @@
             border: none;
             font-weight: bold;
             cursor: pointer;
+        }
+        .ai-trigger {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            z-index: 998;
+            transition: transform 0.3s ease;
+        }
+        .ai-trigger:hover {
+            transform: scale(1.1);
+        }
+        .ai-trigger.hidden {
+            display: none;
+        }
+        .ai-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+        }
+        .ai-trigger-text {
+            margin-top: 8px;
+            color: #94a3b8;
+            font-size: 12px;
+            white-space: nowrap;
         }
         .msg {
             margin-bottom: 10px;
@@ -175,16 +231,32 @@
     </div>
 
     <!-- AI 聊天窗口 -->
-    <div class="ai-chat">
-        <div class="chat-header">AI 学习助手</div>
+    <div class="ai-chat" id="aiChat">
+        <div class="chat-header">
+            <span>AI 学习助手</span>
+            <button class="chat-close" onclick="toggleAI()">×</button>
+        </div>
         <div class="chat-body" id="chatBody"></div>
         <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="输入问题...">
+            <input type="text" id="chatInput" placeholder="输入问题..." onkeypress="if(event.key==='Enter')sendMessage()">
             <button onclick="sendMessage()">发送</button>
         </div>
     </div>
 
+    <!-- AI 召唤按钮 -->
+    <div class="ai-trigger" id="aiTrigger" onclick="toggleAI()">
+        <div class="ai-icon">🤖</div>
+        <span class="ai-trigger-text">点我召唤AI</span>
+    </div>
+
     <script>
+        function toggleAI() {
+            const chat = document.getElementById('aiChat');
+            const trigger = document.getElementById('aiTrigger');
+            chat.classList.toggle('active');
+            trigger.classList.toggle('hidden');
+        }
+
         // 1. 本地问答库（降级备用）
         const qaList = [
             { q: "你好", a: "你好！我是你的学习助手，有什么问题可以问我~" },
