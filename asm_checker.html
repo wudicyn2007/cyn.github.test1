@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bomb Lab GDB 模拟</title>
+<title>Bomb Lab GDB 模拟器</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Consolas,monospace}
+*{margin:0;padding:0;box-sizing:border-box;font-family: 'Microsoft YaHei', Consolas, monospace}
 body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px}
 .container{max-width:1000px;margin:0 auto}
 .back-btn{display:inline-block;padding:8px 20px;background:#38bdf8;color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px}
@@ -30,7 +30,7 @@ h1{color:#38bdf8;text-align:center;margin-bottom:20px;font-size:24px}
 
 <div class="container">
 <a href="select.html" class="back-btn">← 返回选择页</a>
-<h1>Bomb Lab 汇编实验 · GDB 模拟</h1>
+<h1>Bomb Lab 汇编实验 · GDB 模拟器</h1>
 
 <div class="terminal">
 <div class="terminal-output" id="output"></div>
@@ -52,7 +52,7 @@ const PHASE1 = "Border relations with Canada have never been better.";
 
 // 状态
 let state = {
-    mode: "gdb",       // gdb / running
+    mode: "gdb",
     hasBreak: false,
     isRunning: false,
     exited: true

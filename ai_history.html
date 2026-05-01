@@ -1,935 +1,506 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>人工智能相关内容 · 进化与知识图谱</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px;min-height:100vh}
-.container{max-width:1200px;margin:0 auto}
-.back-btn{display:inline-block;padding:8px 20px;background:linear-gradient(135deg,#38bdf8,#818cf8);color:#0f172a;border-radius:30px;text-decoration:none;font-weight:600;margin-bottom:20px;transition:all 0.3s}
-.back-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(56,189,248,0.4)}
-h1{background:linear-gradient(90deg,#38bdf8,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:20px;font-size:28px;font-weight:700}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人工智能相关内容 · 发展历程</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            color: #0f172a;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+        }
+        h1 {
+            background: linear-gradient(90deg, #38bdf8, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 14px;
+            user-select: none;
+        }
+        .tab:hover {
+            border-color: #38bdf8;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            color: #0f172a;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .chart-container {
+            height: 320px;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chart-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #38bdf8;
+            font-size: 16px;
+        }
+        .timeline-slider {
+            margin: 30px 0;
+            padding: 0 20px;
+        }
+        .slider-container {
+            position: relative;
+        }
+        #timeSlider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #1e293b;
+            outline: none;
+            -webkit-appearance: none;
+            margin: 20px 0;
+        }
+        #timeSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(56, 189, 248, 0.5);
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        #currentYear {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+        .ai-events {
+            margin-top: 30px;
+        }
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .event-item {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            opacity: 0.3;
+        }
+        .event-item.active {
+            opacity: 1;
+            border-color: #38bdf8;
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+        }
+        .event-year {
+            color: #38bdf8;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .event-title {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+        .event-desc {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .map-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .map-section h4 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #34d399;
+            font-size: 16px;
+        }
+        .map-container {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #chinaMap {
+            width: 100%;
+            height: 420px;
+        }
+        .map-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .map-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .map-legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .map-legend-dot.active {
+            background: #38bdf8;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+        }
+        .map-legend-dot.inactive {
+            background: #334155;
+        }
+        .map-legend-dot.pulse {
+            background: #f472b6;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px rgba(244, 114, 182, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(244, 114, 182, 1); }
+            100% { box-shadow: 0 0 5px rgba(244, 114, 182, 0.5); }
+        }
 
-.tabs{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
-.tab{padding:10px 28px;background:#1e293b;border-radius:25px;cursor:pointer;font-weight:500;transition:all 0.3s;border:2px solid transparent}
-.tab:hover{border-color:#38bdf8}
-.tab.active{background:linear-gradient(135deg,#38bdf8,#818cf8);color:#0f172a;font-weight:600}
-
-.tab-content{display:none;background:rgba(30,41,59,0.8);backdrop-filter:blur(10px);border-radius:20px;padding:24px;border:1px solid rgba(255,255,255,0.1)}
-.tab-content.active{display:block}
-
-.timeline-container{position:relative;width:100%;height:680px;background:linear-gradient(180deg,#0f172a,#1a2744);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)}
-.timeline-bg{position:absolute;width:100%;height:100%;background-image:radial-gradient(circle at 20% 30%,rgba(56,189,248,0.1) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(167,139,250,0.1) 0%,transparent 50%)}
-.svg-wrapper{width:100%;height:100%;position:relative;z-index:1}
-
-.node{stroke-width:2.5;rx:14;ry:14;cursor:move;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));transition:all 0.3s}
-.node:hover{filter:drop-shadow(0 6px 16px rgba(0,0,0,0.5));transform:scale(1.05)}
-.node-regression{fill:url(#gradRegression);stroke:#38bdf8}
-.node-classification{fill:url(#gradClassification);stroke:#a78bfa}
-.node-neural{fill:url(#gradNeural);stroke:#f472b6}
-.node-clustering{fill:url(#gradClustering);stroke:#34d399}
-.node-dim{fill:url(#gradDim);stroke:#fbbf24}
-.node-rl{fill:url(#gradRL);stroke:#fb923c}
-.node-text{fill:#fff;font-size:12px;text-anchor:middle;font-weight:600}
-.node-year{fill:rgba(255,255,255,0.7);font-size:10px;text-anchor:middle}
-.edge{stroke-width:2;fill:none;opacity:0.6}
-
-.knowledge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-.knowledge-card{background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.1);transition:all 0.3s;position:relative;overflow:hidden}
-.knowledge-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
-.knowledge-card.regression::before{background:linear-gradient(180deg,#38bdf8,#0ea5e9)}
-.knowledge-card.classification::before{background:linear-gradient(180deg,#a78bfa,#818cf8)}
-.knowledge-card.neural::before{background:linear-gradient(180deg,#f472b6,#ec4899)}
-.knowledge-card.clustering::before{background:linear-gradient(180deg,#34d399,#10b981)}
-.knowledge-card.dimensionality::before{background:linear-gradient(180deg,#fbbf24,#f59e0b)}
-.knowledge-card.rl::before{background:linear-gradient(180deg,#fb923c,#f97316)}
-.knowledge-card:hover{transform:translateY(-4px);box-shadow:0 8px 25px rgba(0,0,0,0.3);border-color:rgba(255,255,255,0.2)}
-.knowledge-card h3{font-size:15px;color:#fff;margin-bottom:8px;font-weight:600;display:flex;align-items:center;gap:8px}
-.knowledge-card h3 .icon{font-size:18px}
-.level-bar{height:20px;background:#1e293b;border-radius:10px;overflow:hidden;margin-top:8px}
-.level-fill{height:100%;border-radius:10px;color:#fff;font-size:11px;display:flex;align-items:center;padding-left:10px;font-weight:500}
-.level-basic{background:linear-gradient(90deg,#38bdf8,#0ea5e9)}
-.level-intermediate{background:linear-gradient(90deg,#a78bfa,#818cf8)}
-.level-advanced{background:linear-gradient(90deg,#f472b6,#ec4899)}
-.level-expert{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
-
-.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-bottom:16px;padding:12px;background:rgba(15,23,42,0.6);border-radius:12px}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:13px}
-.legend-dot{width:12px;height:12px;border-radius:50%}
-.legend-dot.regression{background:#38bdf8}
-.legend-dot.classification{background:#a78bfa}
-.legend-dot.neural{background:#f472b6}
-.legend-dot.clustering{background:#34d399}
-.legend-dot.dimensionality{background:#fbbf24}
-.legend-dot.rl{background:#fb923c}
-
-.history-container{padding:20px}
-.chart-container{
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:30px;
-    border:1px solid rgba(255,255,255,0.1)
-}
-.timeline-slider{
-    margin:30px 0;
-    padding:0 20px
-}
-.slider-container{
-    position:relative
-}
-#timeSlider{
-    width:100%;
-    height:6px;
-    border-radius:3px;
-    background:#1e293b;
-    outline:none;
-    -webkit-appearance:none;
-    margin:20px 0
-}
-#timeSlider::-webkit-slider-thumb{
-    -webkit-appearance:none;
-    width:20px;
-    height:20px;
-    border-radius:50%;
-    background:linear-gradient(135deg,#38bdf8,#818cf8);
-    cursor:pointer;
-    box-shadow:0 2px 10px rgba(56,189,248,0.5)
-}
-.slider-labels{
-    display:flex;
-    justify-content:space-between;
-    font-size:12px;
-    color:#94a3b8
-}
-#currentYear{
-    color:#38bdf8;
-    font-weight:600
-}
-.ai-events{
-    margin-top:30px
-}
-.events-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
-    gap:16px
-}
-.event-item{
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    border-radius:12px;
-    padding:16px;
-    border:1px solid rgba(255,255,255,0.1);
-    transition:all 0.3s ease;
-    opacity:0.3
-}
-.event-item.active{
-    opacity:1;
-    border-color:#38bdf8;
-    box-shadow:0 4px 20px rgba(56,189,248,0.3)
-}
-.event-year{
-    color:#38bdf8;
-    font-weight:600;
-    font-size:14px;
-    margin-bottom:8px
-}
-.event-title{
-    color:#fff;
-    font-weight:600;
-    font-size:15px;
-    margin-bottom:8px
-}
-.event-desc{
-    color:#94a3b8;
-    font-size:13px;
-    line-height:1.4
-}
-.map-section{
-    margin-top:40px;
-    padding-top:30px;
-    border-top:1px solid rgba(255,255,255,0.1)
-}
-.map-section h4{
-    text-align:center;
-    margin-bottom:20px;
-    color:#34d399
-}
-.map-container{
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    border-radius:16px;
-    padding:20px;
-    border:1px solid rgba(255,255,255,0.1)
-}
-#chinaMap{
-    width:100%;
-    height:500px;
-}
-.map-legend{
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    margin-top:15px;
-    font-size:12px;
-    color:#94a3b8
-}
-.map-legend-item{
-    display:flex;
-    align-items:center;
-    gap:5px
-}
-.map-legend-dot{
-    width:10px;
-    height:10px;
-    border-radius:50%
-}
-.map-legend-dot.active{
-    background:#38bdf8;
-    box-shadow:0 0 8px rgba(56,189,248,0.6)
-}
-.map-legend-dot.inactive{
-    background:#334155
-}
-.map-legend-dot.pulse{
-    background:#f472b6;
-    animation:pulse 2s infinite
-}
-@keyframes pulse{
-    0%{box-shadow:0 0 5px rgba(244,114,182,0.5)}
-    50%{box-shadow:0 0 15px rgba(244,114,182,1)}
-    100%{box-shadow:0 0 5px rgba(244,114,182,0.5)}
-}
-</style>
+        .content-wrap{padding:20px 0;line-height:1.8;color:#e2e8f0}
+        .content-wrap h3{color:#38bdf8;margin-bottom:15px}
+        .content-wrap p{margin-bottom:12px;text-indent:2em}
+        .content-wrap ul{padding-left:2em;margin-bottom:15px}
+    </style>
 </head>
-
 <body>
+
 <div class="container">
-<a href="select.html" class="back-btn">← 返回选择页</a>
-<h1>人工智能相关内容</h1>
+    <a href="select.html" class="back-btn">← 返回选择页</a>
+    <h1>人工智能相关内容</h1>
 
-<div class="tabs">
-<div class="tab" id="tab-know">知识图谱</div>
-<div class="tab active" id="tab-evo">进化史</div>
-<div class="tab" id="tab-history">发展曲线</div>
-</div>
+    <div class="tabs">
+        <div class="tab" id="tab-know">知识图谱</div>
+        <div class="tab" id="tab-evo">进化树</div>
+        <div class="tab active" id="tab-history">发展历程</div>
+    </div>
 
-<div class="tab-content active" id="evolution-tab">
-<div class="timeline-container">
-<div class="timeline-bg"></div>
-<svg class="svg-wrapper" viewBox="0 0 1000 680">
-<defs>
-<linearGradient id="gradRegression" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" style="stop-color:#1e3a5f"/>
-<stop offset="100%" style="stop-color:#0f2744"/>
-</linearGradient>
-<linearGradient id="gradClassification" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" style="stop-color:#3b2d6b"/>
-<stop offset="100%" style="stop-color:#1e1a4a"/>
-</linearGradient>
-<linearGradient id="gradNeural" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" style="stop-color:#5c2a4a"/>
-<stop offset="100%" style="stop-color:#3a1a2e"/>
-</linearGradient>
-<linearGradient id="gradClustering" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" style="stop-color:#1a4a3a"/>
-<stop offset="100%" style="stop-color:#0f2e24"/>
-</linearGradient>
-<linearGradient id="gradDim" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" style="stop-color:#4a3a1a"/>
-<stop offset="100%" style="stop-color:#2e2410"/>
-</linearGradient>
-<linearGradient id="gradRL" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" style="stop-color:#4a2a1a"/>
-<stop offset="100%" style="stop-color:#2e1a10"/>
-</linearGradient>
-<linearGradient id="edgeGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
-<stop offset="0%" style="stop-color:#38bdf8"/>
-<stop offset="100%" style="stop-color:#818cf8"/>
-</linearGradient>
-<linearGradient id="edgeGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
-<stop offset="0%" style="stop-color:#a78bfa"/>
-<stop offset="100%" style="stop-color:#f472b6"/>
-</linearGradient>
-<linearGradient id="edgeGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
-<stop offset="0%" style="stop-color:#34d399"/>
-<stop offset="100%" style="stop-color:#38bdf8"/>
-</linearGradient>
-<marker id="arrow" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
-<polygon points="0 0,8 2.5,0 5" fill="#64748b" />
-</marker>
-</defs>
+    <div class="tab-content" id="know-tab">
+        <div class="content-wrap">
+            <h3>📚 人工智能知识图谱</h3>
+            <p>人工智能知识图谱是以结构化、可视化的形式，整合AI领域核心概念、技术分支、应用场景与关键技术的知识体系，清晰梳理各模块之间的关联关系。</p>
+            <h3>🔹 核心分类</h3>
+            <ul>
+                <li>基础层：机器学习、深度学习、神经网络、算法理论</li>
+                <li>技术层：自然语言处理、计算机视觉、语音识别、强化学习</li>
+                <li>应用层：智能办公、智慧医疗、自动驾驶、智能制造、AI大模型</li>
+                <li>伦理层：AI安全、数据隐私、算法公平、行业规范</li>
+            </ul>
+            <p>知识图谱能够帮助学习者系统化理解人工智能整体框架，理清技术迭代逻辑与学科交叉关系，是AI学习与研究的重要可视化工具。</p>
+        </div>
+    </div>
 
-<g id="edges">
-<line class="edge" id="e1" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-<line class="edge" id="e2" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-<line class="edge" id="e3" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-<line class="edge" id="e4" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-<line class="edge" id="e5" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-<line class="edge" id="e6" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-<line class="edge" id="e7" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-<line class="edge" id="e8" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-<line class="edge" id="e9" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-<line class="edge" id="e10" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-<line class="edge" id="e11" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
-</g>
+    <div class="tab-content" id="evo-tab">
+        <div class="content-wrap">
+            <h3>🌳 人工智能进化树</h3>
+            <p>人工智能进化树纵向展示AI从诞生至今的技术迭代、派系分支与发展脉络，清晰划分三大发展阶段与技术分支走向。</p>
+            <h3>🔹 三大发展阶段</h3>
+            <ul>
+                <li>萌芽期（1950–1980）：图灵测试、达特茅斯会议、早期专家系统，规则式AI为主</li>
+                <li>发展期（1980–2010）：机器学习兴起、算法优化、模式识别技术落地</li>
+                <li>爆发期（2010至今）：深度学习、大模型、多模态AI、通用人工智能探索</li>
+            </ul>
+            <h3>🔹 技术分支演化</h3>
+            <p>从传统符号主义AI，逐步分化出机器学习分支，再衍生出深度学习、Transformer架构、生成式AI等主流方向，形成如今多技术并行、多场景落地的完整进化体系。</p>
+        </div>
+    </div>
 
-<g id="nodes">
+    <div class="tab-content active" id="history-tab">
+        <div class="history-container">
+            <div class="chart-container">
+                <div class="chart-title">人工智能发展历史时间轴</div>
+                <canvas id="historyChart"></canvas>
+            </div>
 
-<g class="draggable" data-id="n1" transform="translate(150,100)">
-<rect class="node node-regression" width="100" height="45" x="-50" y="-22"/>
-<text class="node-text" x="0" y="5">线性回归</text>
-<text class="node-year" x="0" y="-12">1805</text>
-</g>
+            <div class="timeline-slider">
+                <div class="slider-container">
+                    <input type="range" id="timeSlider" min="1950" max="2026" value="1950" step="1">
+                    <div class="slider-labels">
+                        <span>1950</span>
+                        <span id="currentYear">1950</span>
+                        <span>2026</span>
+                    </div>
+                </div>
+            </div>
 
-<g class="draggable" data-id="n2" transform="translate(280,80)">
-<rect class="node node-regression" width="100" height="40" x="-50" y="-20"/>
-<text class="node-text" x="0" y="5">多项式回归</text>
-<text class="node-year" x="0" y="-10">1815</text>
-</g>
+            <div class="ai-events">
+                <h4 style="margin-bottom: 15px; color: #a78bfa;">人工智能里程碑事件</h4>
+                <div class="events-grid" id="eventsGrid">
+                    <div class="event-item" data-year="1950">
+                        <div class="event-year">1950</div>
+                        <div class="event-title">图灵测试提出</div>
+                        <div class="event-desc">艾伦·图灵提出了判断机器是否具有智能的测试方法</div>
+                    </div>
+                    <div class="event-item" data-year="1956">
+                        <div class="event-year">1956</div>
+                        <div class="event-title">达特茅斯会议</div>
+                        <div class="event-desc">人工智能概念正式诞生</div>
+                    </div>
+                    <div class="event-item" data-year="1965">
+                        <div class="event-year">1965</div>
+                        <div class="event-title">专家系统</div>
+                        <div class="event-desc">首个专家系统DENDRAL开发完成</div>
+                    </div>
+                    <div class="event-item" data-year="1997">
+                        <div class="event-year">1997</div>
+                        <div class="event-title">深蓝战胜卡斯帕罗夫</div>
+                        <div class="event-desc">IBM深蓝计算机战胜国际象棋世界冠军</div>
+                    </div>
+                    <div class="event-item" data-year="2012">
+                        <div class="event-year">2012</div>
+                        <div class="event-title">AlexNet</div>
+                        <div class="event-desc">深度学习在ImageNet竞赛中取得突破</div>
+                    </div>
+                    <div class="event-item" data-year="2016">
+                        <div class="event-year">2016</div>
+                        <div class="event-title">AlphaGo</div>
+                        <div class="event-desc">AlphaGo战胜围棋世界冠军李世石</div>
+                    </div>
+                    <div class="event-item" data-year="2018">
+                        <div class="event-year">2018</div>
+                        <div class="event-title">GPT-1</div>
+                        <div class="event-desc">OpenAI发布首个GPT模型</div>
+                    </div>
+                    <div class="event-item" data-year="2022">
+                        <div class="event-year">2022</div>
+                        <div class="event-title">ChatGPT</div>
+                        <div class="event-desc">ChatGPT发布，掀起AI热潮</div>
+                    </div>
+                </div>
+            </div>
 
-<g class="draggable" data-id="n3" transform="translate(280,150)">
-<rect class="node node-regression" width="70" height="40" x="-35" y="-20"/>
-<text class="node-text" x="0" y="5">Ridge</text>
-<text class="node-year" x="0" y="-10">1970</text>
-</g>
-
-<g class="draggable" data-id="n4" transform="translate(150,180)">
-<rect class="node node-regression" width="70" height="40" x="-35" y="-20"/>
-<text class="node-text" x="0" y="5">Lasso</text>
-<text class="node-year" x="0" y="-10">1996</text>
-</g>
-
-<g class="draggable" data-id="n5" transform="translate(420,100)">
-<rect class="node node-classification" width="60" height="40" x="-30" y="-20"/>
-<text class="node-text" x="0" y="5">KNN</text>
-<text class="node-year" x="0" y="-10">1951</text>
-</g>
-
-<g class="draggable" data-id="n6" transform="translate(530,100)">
-<rect class="node node-classification" width="60" height="40" x="-30" y="-20"/>
-<text class="node-text" x="0" y="5">SVM</text>
-<text class="node-year" x="0" y="-10">1995</text>
-</g>
-
-<g class="draggable" data-id="n7" transform="translate(420,200)">
-<rect class="node node-classification" width="80" height="40" x="-40" y="-20"/>
-<text class="node-text" x="0" y="5">逻辑回归</text>
-<text class="node-year" x="0" y="-10">1958</text>
-</g>
-
-<g class="draggable" data-id="n8" transform="translate(530,200)">
-<rect class="node node-classification" width="80" height="40" x="-40" y="-20"/>
-<text class="node-text" x="0" y="5">决策树</text>
-<text class="node-year" x="0" y="-10">1986</text>
-</g>
-
-<g class="draggable" data-id="n9" transform="translate(150,300)">
-<rect class="node node-neural" width="70" height="45" x="-35" y="-22"/>
-<text class="node-text" x="0" y="5">CNN</text>
-<text class="node-year" x="0" y="-12">1998</text>
-</g>
-
-<g class="draggable" data-id="n10" transform="translate(280,300)">
-<rect class="node node-neural" width="100" height="45" x="-50" y="-22"/>
-<text class="node-text" x="0" y="5">神经网络</text>
-<text class="node-year" x="0" y="-12">1986</text>
-</g>
-
-<g class="draggable" data-id="n11" transform="translate(420,300)">
-<rect class="node node-neural" width="60" height="40" x="-30" y="-20"/>
-<text class="node-text" x="0" y="5">RNN</text>
-<text class="node-year" x="0" y="-10">1986</text>
-</g>
-
-<g class="draggable" data-id="n12" transform="translate(550,300)">
-<rect class="node node-neural" width="90" height="45" x="-45" y="-22"/>
-<text class="node-text" x="0" y="5">Attention</text>
-<text class="node-year" x="0" y="-12">2014</text>
-</g>
-
-<g class="draggable" data-id="n13" transform="translate(180,420)">
-<rect class="node node-dim" width="70" height="45" x="-35" y="-22"/>
-<text class="node-text" x="0" y="5">PCA</text>
-<text class="node-year" x="0" y="-12">1901</text>
-</g>
-
-<g class="draggable" data-id="n14" transform="translate(320,420)">
-<rect class="node node-dim" width="60" height="40" x="-30" y="-20"/>
-<text class="node-text" x="0" y="5">LDA</text>
-<text class="node-year" x="0" y="-10">1936</text>
-</g>
-
-<g class="draggable" data-id="n15" transform="translate(450,420)">
-<rect class="node node-dim" width="70" height="40" x="-35" y="-20"/>
-<text class="node-text" x="0" y="5">t-SNE</text>
-<text class="node-year" x="0" y="-10">2008</text>
-</g>
-
-<g class="draggable" data-id="n16" transform="translate(180,520)">
-<rect class="node node-clustering" width="90" height="45" x="-45" y="-22"/>
-<text class="node-text" x="0" y="5">K-Means</text>
-<text class="node-year" x="0" y="-12">1957</text>
-</g>
-
-<g class="draggable" data-id="n17" transform="translate(330,520)">
-<rect class="node node-clustering" width="80" height="40" x="-40" y="-20"/>
-<text class="node-text" x="0" y="5">DBSCAN</text>
-<text class="node-year" x="0" y="-10">1996</text>
-</g>
-
-<g class="draggable" data-id="n18" transform="translate(180,600)">
-<rect class="node node-rl" width="100" height="45" x="-50" y="-22"/>
-<text class="node-text" x="0" y="5">Q-Learning</text>
-<text class="node-year" x="0" y="-12">1989</text>
-</g>
-
-</g>
-</svg>
-</div>
-</div>
-
-<div class="tab-content" id="knowledge-tab">
-<div class="legend">
-<div class="legend-item"><span class="legend-dot regression"></span>回归算法</div>
-<div class="legend-item"><span class="legend-dot classification"></span>分类算法</div>
-<div class="legend-item"><span class="legend-dot neural"></span>神经网络</div>
-<div class="legend-item"><span class="legend-dot clustering"></span>聚类算法</div>
-<div class="legend-item"><span class="legend-dot dimensionality"></span>降维技术</div>
-<div class="legend-item"><span class="legend-dot rl"></span>强化学习</div>
-</div>
-<div class="knowledge-grid">
-
-<div class="knowledge-card regression"><h3>📊 线性回归</h3><div class="level-bar"><div class="level-fill level-basic" style="width:20%">基础</div></div></div>
-<div class="knowledge-card regression"><h3>📈 多项式回归</h3><div class="level-bar"><div class="level-fill level-basic" style="width:20%">基础</div></div></div>
-<div class="knowledge-card regression"><h3>📉 Ridge回归</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card regression"><h3>📉 Lasso回归</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card classification"><h3>🎯 K近邻</h3><div class="level-bar"><div class="level-fill level-basic" style="width:20%">基础</div></div></div>
-<div class="knowledge-card classification"><h3>🔮 SVM</h3><div class="level-bar"><div class="level-fill level-advanced" style="width:60%">高级</div></div></div>
-<div class="knowledge-card classification"><h3>⚖️ 逻辑回归</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card classification"><h3>🌳 决策树</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card neural"><h3>🧠 CNN</h3><div class="level-bar"><div class="level-fill level-advanced" style="width:80%">深度</div></div></div>
-<div class="knowledge-card neural"><h3>🔗 RNN</h3><div class="level-bar"><div class="level-fill level-advanced" style="width:80%">深度</div></div></div>
-<div class="knowledge-card neural"><h3>✨ Attention</h3><div class="level-bar"><div class="level-fill level-advanced" style="width:80%">深度</div></div></div>
-<div class="knowledge-card dimensionality"><h3>📐 PCA</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card clustering"><h3>🎪 K-Means</h3><div class="level-bar"><div class="level-fill level-basic" style="width:20%">基础</div></div></div>
-<div class="knowledge-card clustering"><h3>🔵 DBSCAN</h3><div class="level-bar"><div class="level-fill level-intermediate" style="width:40%">进阶</div></div></div>
-<div class="knowledge-card rl"><h3>🎮 Q-Learning</h3><div class="level-bar"><div class="level-fill level-expert" style="width:100%">专家</div></div></div>
-
-</div>
-</div>
-
-<div class="tab-content" id="history-tab">
-<div class="history-container">
-<h3 style="text-align: center; margin-bottom: 20px; color: #38bdf8;">人工智能发展历史曲线</h3>
-
-<div class="chart-container">
-<canvas id="historyChart" width="800" height="400"></canvas>
-</div>
-
-<div class="timeline-slider">
-<div class="slider-container">
-<input type="range" id="timeSlider" min="1950" max="2026" value="1950" step="1">
-<div class="slider-labels">
-<span>1950</span>
-<span id="currentYear">1950</span>
-<span>2026</span>
-</div>
-</div>
-</div>
-
-<div class="ai-events">
-<h4 style="margin-bottom: 15px; color: #a78bfa;">人工智能里程碑事件</h4>
-<div class="events-grid" id="eventsGrid">
-<div class="event-item" data-year="1950">
-<div class="event-year">1950</div>
-<div class="event-title">图灵测试提出</div>
-<div class="event-desc">艾伦·图灵提出了判断机器是否具有智能的测试方法</div>
-</div>
-<div class="event-item" data-year="1956">
-<div class="event-year">1956</div>
-<div class="event-title">达特茅斯会议</div>
-<div class="event-desc">人工智能概念正式诞生</div>
-</div>
-<div class="event-item" data-year="1965">
-<div class="event-year">1965</div>
-<div class="event-title">专家系统</div>
-<div class="event-desc">首个专家系统DENDRAL开发完成</div>
-</div>
-<div class="event-item" data-year="1997">
-<div class="event-year">1997</div>
-<div class="event-title">深蓝战胜卡斯帕罗夫</div>
-<div class="event-desc">IBM深蓝计算机战胜国际象棋世界冠军</div>
-</div>
-<div class="event-item" data-year="2012">
-<div class="event-year">2012</div>
-<div class="event-title">AlexNet</div>
-<div class="event-desc">深度学习在ImageNet竞赛中取得突破</div>
-</div>
-<div class="event-item" data-year="2016">
-<div class="event-year">2016</div>
-<div class="event-title">AlphaGo</div>
-<div class="event-desc">AlphaGo战胜围棋世界冠军李世石</div>
-</div>
-<div class="event-item" data-year="2018">
-<div class="event-year">2018</div>
-<div class="event-title">GPT-1</div>
-<div class="event-desc">OpenAI发布首个GPT模型</div>
-</div>
-<div class="event-item" data-year="2022">
-<div class="event-year">2022</div>
-<div class="event-title">ChatGPT</div>
-<div class="event-desc">ChatGPT发布，掀起AI热潮</div>
-</div>
-</div>
-</div>
-
-<div class="map-section">
-<h4>🤖 AI城市分布图</h4>
-<div class="map-container">
-<div id="chinaMap"></div>
-<div class="map-legend">
-<div class="map-legend-item"><span class="map-legend-dot inactive"></span>未发展</div>
-<div class="map-legend-item"><span class="map-legend-dot active"></span>AI发展中</div>
-<div class="map-legend-item"><span class="map-legend-dot pulse"></span>新点亮</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
+            <div class="map-section">
+                <h4>🗺️ AI省级发展分布图</h4>
+                <div class="map-container">
+                    <div id="chinaMap"></div>
+                    <div class="map-legend">
+                        <div class="map-legend-item"><span class="map-legend-dot inactive"></span>未发展</div>
+                        <div class="map-legend-item"><span class="map-legend-dot active"></span>AI发展中</div>
+                        <div class="map-legend-item"><span class="map-legend-dot pulse"></span>新起点</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
 <script>
-const tabs = document.querySelectorAll('.tab');
-const contents = document.querySelectorAll('.tab-content');
-tabs[0].onclick = ()=>{show('know')}
-tabs[1].onclick = ()=>{show('evo')}
-tabs[2].onclick = ()=>{show('history')}
-function show(t){
-    contents.forEach(c=>c.classList.remove('active'))
-    tabs.forEach(t=>t.classList.remove('active'))
-    if(t==='know'){document.getElementById('knowledge-tab').classList.add('active');tabs[0].classList.add('active')}
-    else if(t==='evo'){document.getElementById('evolution-tab').classList.add('active');tabs[1].classList.add('active')}
-    else if(t==='history'){document.getElementById('history-tab').classList.add('active');tabs[2].classList.add('active');initChart()}
-}
+    let historyChart;
+    let chinaMapChart;
+    let rendered = false;
 
-const nodeColors = {
-    'n1':'#38bdf8','n2':'#38bdf8','n3':'#38bdf8','n4':'#38bdf8',
-    'n5':'#a78bfa','n6':'#a78bfa','n7':'#a78bfa','n8':'#a78bfa',
-    'n9':'#f472b6','n10':'#f472b6','n11':'#f472b6','n12':'#f472b6',
-    'n13':'#fbbf24','n14':'#fbbf24','n15':'#fbbf24',
-    'n16':'#34d399','n17':'#34d399',
-    'n18':'#fb923c'
-};
-
-const connections = [
-  { e: 'e1', from: 'n1', to: 'n2' },
-  { e: 'e2', from: 'n1', to: 'n3' },
-  { e: 'e3', from: 'n3', to: 'n4' },
-  { e: 'e4', from: 'n1', to: 'n5' },
-  { e: 'e5', from: 'n5', to: 'n6' },
-  { e: 'e6', from: 'n5', to: 'n7' },
-  { e: 'e7', from: 'n7', to: 'n8' },
-  { e: 'e8', from: 'n9', to: 'n10' },
-  { e: 'e9', from: 'n10', to: 'n11' },
-  { e: 'e10', from: 'n11', to: 'n12' },
-  { e: 'e11', from: 'n13', to: 'n14' },
-];
-
-function createEdges() {
-    const edgesGroup = document.getElementById('edges');
-    edgesGroup.innerHTML = '';
-    connections.forEach(c => {
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('id', c.e);
-        line.setAttribute('stroke-width', '2');
-        line.setAttribute('opacity', '0.5');
-        edgesGroup.appendChild(line);
-    });
-}
-
-function updateEdges() {
-    connections.forEach(c => {
-        const from = document.querySelector(`[data-id="${c.from}"]`);
-        const to = document.querySelector(`[data-id="${c.to}"]`);
-        const edge = document.getElementById(c.e);
-        if (!from || !to || !edge) return;
-
-        const mFrom = from.transform.baseVal[0].matrix;
-        const mTo = to.transform.baseVal[0].matrix;
-
-        edge.setAttribute('x1', mFrom.e);
-        edge.setAttribute('y1', mFrom.f);
-        edge.setAttribute('x2', mTo.e);
-        edge.setAttribute('y2', mTo.f);
-        edge.setAttribute('stroke', nodeColors[c.from]);
-    });
-}
-
-let drag = null, dx=0, dy=0;
-document.querySelectorAll('.draggable').forEach(g=>{
-  g.onmousedown = e=>{
-    drag = g;
-    const t = g.transform.baseVal[0].matrix;
-    dx = e.clientX - t.e;
-    dy = e.clientY - t.f;
-  }
-});
-
-document.onmousemove = e=>{
-  if (!drag) return;
-  const x = e.clientX - dx;
-  const y = e.clientY - dy;
-  drag.setAttribute('transform', `translate(${x},${y})`);
-  updateEdges();
-};
-
-document.onmouseup = ()=>{ drag=null; }
-window.onload = ()=>{ createEdges(); updateEdges(); };
-
-// 图表初始化
-let historyChart;
-let chinaMapChart;
-function initChart() {
-    if (historyChart) {
-        historyChart.destroy();
-    }
-    
-    const ctx = document.getElementById('historyChart').getContext('2d');
-    
-    const years = ['1950', '1960', '1970', '1980', '1990', '2000', '2010', '2020', '2026'];
-    const aiProgress = [10, 15, 20, 30, 45, 60, 75, 90, 98];
-    const aiResearch = [5, 10, 15, 25, 40, 55, 70, 85, 95];
-    
-    historyChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: years,
-            datasets: [
-                {
-                    label: 'AI 能力进展',
-                    data: aiProgress,
-                    borderColor: '#38bdf8',
-                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                },
-                {
-                    label: 'AI 研究热度',
-                    data: aiResearch,
-                    borderColor: '#a78bfa',
-                    backgroundColor: 'rgba(167, 139, 250, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#fff'
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        color: '#94a3b8'
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    }
-                },
-                x: {
-                    ticks: {
-                        color: '#94a3b8'
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    }
-                }
-            }
-        }
-    });
-    
-    // 初始化地图
-    initChinaMap();
-    // 初始化时间轴
-    initTimeline();
-}
-
-// 时间轴初始化
-function initTimeline() {
-    const slider = document.getElementById('timeSlider');
-    const currentYear = document.getElementById('currentYear');
-    
-    slider.oninput = function() {
-        const year = this.value;
-        currentYear.textContent = year;
-        updateEvents(year);
+    window.onload = () => {
+        if (rendered) return;
+        initAll();
+        bindTabs();
+        rendered = true;
     };
-    
-    // 初始更新
-    updateEvents(1950);
-}
 
-// 更新事件状态
-function updateEvents(year) {
-    const events = document.querySelectorAll('.event-item');
-    events.forEach(event => {
-        const eventYear = parseInt(event.dataset.year);
-        if (eventYear <= year) {
-            event.classList.add('active');
-        } else {
-            event.classList.remove('active');
-        }
-    });
-    
-    // 更新城市状态
-    updateCities(year);
-}
-
-// 初始化中国地图
-function initChinaMap() {
-    const chartDom = document.getElementById('chinaMap');
-    
-    if (chinaMapChart) {
-        chinaMapChart.dispose();
+    function bindTabs() {
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                const targetId = tab.id.replace('tab-','');
+                document.getElementById(targetId + '-tab').classList.add('active');
+            })
+        })
     }
-    
-    chinaMapChart = echarts.init(chartDom);
-    
-    const cities = [
-        { name: '北京', value: [116.46, 39.92], year: 1980 },
-        { name: '上海', value: [121.48, 31.22], year: 1980 },
-        { name: '深圳', value: [114.07, 22.62], year: 1995 },
-        { name: '杭州', value: [120.19, 30.26], year: 1995 },
-        { name: '南京', value: [118.78, 32.04], year: 1990 },
-        { name: '武汉', value: [114.31, 30.52], year: 1990 },
-        { name: '西安', value: [108.95, 34.27], year: 1990 },
-        { name: '成都', value: [104.06, 30.67], year: 1995 },
-        { name: '重庆', value: [106.54, 29.59], year: 1995 },
-        { name: '广州', value: [113.23, 23.16], year: 1985 },
-        { name: '天津', value: [117.2, 39.13], year: 1985 },
-        { name: '苏州', value: [120.62, 31.3], year: 1995 },
-        { name: '合肥', value: [117.27, 31.86], year: 2000 },
-        { name: '长沙', value: [113, 28.21], year: 2000 },
-        { name: '哈尔滨', value: [126.63, 45.75], year: 1990 },
-        { name: '沈阳', value: [123.38, 41.8], year: 1990 },
-        { name: '大连', value: [121.62, 38.92], year: 1995 },
-        { name: '郑州', value: [113.65, 34.76], year: 2000 },
-        { name: '青岛', value: [120.38, 36.07], year: 2000 },
-        { name: '昆明', value: [102.73, 25.04], year: 2005 },
-        { name: '贵阳', value: [106.71, 26.57], year: 2005 },
-        { name: '厦门', value: [118.1, 24.46], year: 2005 },
-        { name: '福州', value: [119.3, 26.08], year: 2005 },
-        { name: '济南', value: [116.98, 36.67], year: 2000 },
-        { name: '太原', value: [112.53, 37.87], year: 2005 },
-        { name: '石家庄', value: [114.48, 38.03], year: 2005 },
-        { name: '长春', value: [125.35, 43.88], year: 2000 },
-        { name: '东莞', value: [113.75, 23.04], year: 2005 }
-    ];
-    
-    const allProvinces = [
-        '北京', '天津', '河北', '山西', '内蒙古', '辽宁', '吉林', '黑龙江',
-        '上海', '江苏', '浙江', '安徽', '福建', '江西', '山东', '河南',
-        '湖北', '湖南', '广东', '广西', '海南', '重庆', '四川', '贵州',
-        '云南', '西藏', '陕西', '甘肃', '青海', '宁夏', '新疆'
-    ];
-    
-    const option = {
-        backgroundColor: 'transparent',
-        tooltip: {
-            trigger: 'item',
-            formatter: function(params) {
-                if (params.seriesType === 'scatter') {
-                    return params.name + '<br/>AI发展: ' + (params.data.year || '未知');
-                }
-                return params.name;
-            }
-        },
-        geo: {
-            map: 'china',
-            roam: true,
-            zoom: 1.2,
-            scaleLimit: {
-                min: 0.5,
-                max: 3
-            },
-            label: {
-                show: false
-            },
-            itemStyle: {
-                borderColor: '#38bdf8',
-                borderWidth: 1,
-                areaColor: '#1e293b',
-                shadowColor: 'rgba(56, 189, 248, 0.3)',
-                shadowBlur: 10
-            },
-            emphasis: {
-                label: {
-                    show: true,
-                    color: '#fff'
-                },
-                itemStyle: {
-                    areaColor: '#2d4a6f',
-                    borderColor: '#38bdf8',
-                    borderWidth: 2
-                }
-            },
-            select: {
-                disabled: true
-            }
-        },
-        series: [
-            {
-                name: 'AI城市',
-                type: 'scatter',
-                coordinateSystem: 'geo',
-                data: cities.map(c => ({
-                    name: c.name,
-                    value: c.value,
-                    year: c.year,
-                    itemStyle: {
-                        color: '#334155',
+
+    function initAll() {
+        initChart();
+        initTimeline();
+        initChinaMap();
+    }
+
+    function initChart() {
+        const ctx = document.getElementById('historyChart').getContext('2d');
+        const years = ['1950', '1960', '1970', '1980', '1990', '2000', '2010', '2020', '2026'];
+        const aiProgress = [10, 15, 20, 30, 45, 60, 75, 90, 98];
+        const aiResearch = [5, 10, 15, 25, 40, 55, 70, 85, 95];
+
+        historyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: 'AI 能力进化',
+                        data: aiProgress,
                         borderColor: '#38bdf8',
-                        borderWidth: 1
-                    }
-                })),
-                symbolSize: 12,
-                label: {
-                    show: true,
-                    formatter: '{b}',
-                    position: 'bottom',
-                    color: '#94a3b8',
-                    fontSize: 10
-                },
-                emphasis: {
-                    scale: 1.5,
-                    itemStyle: {
-                        color: '#38bdf8',
-                        borderColor: '#fff',
-                        borderWidth: 2,
-                        shadowColor: 'rgba(56, 189, 248, 0.8)',
-                        shadowBlur: 15
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        tension: 0.4,
+                        fill: true
                     },
-                    label: {
-                        color: '#fff',
-                        fontWeight: 'bold'
+                    {
+                        label: 'AI 研究热度',
+                        data: aiResearch,
+                        borderColor: '#a78bfa',
+                        backgroundColor: 'rgba(167, 139, 250, 0.1)',
+                        tension: 0.4,
+                        fill: true
                     }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#fff' } } },
+                scales: {
+                    y: { beginAtZero: true, max: 100 },
+                    x: { ticks: { color: '#94a3b8' } }
                 }
             }
-        ]
-    };
-    
-    chinaMapChart.setOption(option);
-}
-
-// 城市信息
-const cityInfo = {
-    '北京': { desc: '中国AI研究中心，清华、北大等顶尖学府汇聚', years: '1980年至今' },
-    '上海': { desc: '上海AI研究院，张江高科技园区', years: '1980年至今' },
-    '深圳': { desc: '华为、腾讯总部，AI产业聚集地', years: '1995年至今' },
-    '杭州': { desc: '阿里巴巴总部，电商AI与云计算中心', years: '1995年至今' },
-    '南京': { desc: '南京大学AI研究，江苏AI产业中心', years: '1990年至今' },
-    '武汉': { desc: '武汉大学、华中科技大学AI研究', years: '1990年至今' },
-    '西安': { desc: '西安交通大学AI研究，西部地区AI中心', years: '1990年至今' },
-    '成都': { desc: '四川大学、电子科技大学AI研究', years: '1995年至今' },
-    '重庆': { desc: '重庆大学AI研究，西南AI产业基地', years: '1995年至今' },
-    '广州': { desc: '中山大学、华南理工大学AI研究', years: '1985年至今' },
-    '天津': { desc: '天津大学、南开大学AI研究', years: '1985年至今' },
-    '苏州': { desc: '苏州工业园区，AI与智能制造中心', years: '1995年至今' },
-    '合肥': { desc: '中国科技大学，AI基础研究重镇', years: '2000年至今' },
-    '长沙': { desc: '中南大学、湖南大学AI研究', years: '2000年至今' },
-    '哈尔滨': { desc: '哈尔滨工业大学，机器人与AI研究', years: '1990年至今' },
-    '沈阳': { desc: '东北大学AI研究，辽宁省AI中心', years: '1990年至今' },
-    '大连': { desc: '大连理工大学，沿海AI产业基地', years: '1995年至今' },
-    '郑州': { desc: '郑州大学AI研究，中原地区AI中心', years: '2000年至今' },
-    '青岛': { desc: '海尔、海信智能制造，海洋AI研究', years: '2000年至今' },
-    '昆明': { desc: '昆明理工大学，云南AI研究基地', years: '2005年至今' },
-    '贵阳': { desc: '大数据中心，贵州AI产业基地', years: '2005年至今' },
-    '厦门': { desc: '厦门大学AI研究，东南沿海AI中心', years: '2005年至今' },
-    '福州': { desc: '福州大学AI研究，福建省AI基地', years: '2005年至今' },
-    '济南': { desc: '山东大学AI研究，齐鲁AI产业中心', years: '2000年至今' },
-    '太原': { desc: '太原理工大学AI研究，山西AI基地', years: '2005年至今' },
-    '石家庄': { desc: '河北工业大学AI研究，京津冀AI辐射区', years: '2005年至今' },
-    '长春': { desc: '吉林大学AI研究，东北AI产业基地', years: '2000年至今' },
-    '东莞': { desc: '制造业AI转型，粤港澳大湾区AI重镇', years: '2005年至今' }
-};
-
-// 更新城市状态
-function updateCities(year) {
-    if (!chinaMapChart) return;
-    
-    const cities = [
-        { name: '北京', value: [116.46, 39.92], year: 1980 },
-        { name: '上海', value: [121.48, 31.22], year: 1980 },
-        { name: '深圳', value: [114.07, 22.62], year: 1995 },
-        { name: '杭州', value: [120.19, 30.26], year: 1995 },
-        { name: '南京', value: [118.78, 32.04], year: 1990 },
-        { name: '武汉', value: [114.31, 30.52], year: 1990 },
-        { name: '西安', value: [108.95, 34.27], year: 1990 },
-        { name: '成都', value: [104.06, 30.67], year: 1995 },
-        { name: '重庆', value: [106.54, 29.59], year: 1995 },
-        { name: '广州', value: [113.23, 23.16], year: 1985 },
-        { name: '天津', value: [117.2, 39.13], year: 1985 },
-        { name: '苏州', value: [120.62, 31.3], year: 1995 },
-        { name: '合肥', value: [117.27, 31.86], year: 2000 },
-        { name: '长沙', value: [113, 28.21], year: 2000 },
-        { name: '哈尔滨', value: [126.63, 45.75], year: 1990 },
-        { name: '沈阳', value: [123.38, 41.8], year: 1990 },
-        { name: '大连', value: [121.62, 38.92], year: 1995 },
-        { name: '郑州', value: [113.65, 34.76], year: 2000 },
-        { name: '青岛', value: [120.38, 36.07], year: 2000 },
-        { name: '昆明', value: [102.73, 25.04], year: 2005 },
-        { name: '贵阳', value: [106.71, 26.57], year: 2005 },
-        { name: '厦门', value: [118.1, 24.46], year: 2005 },
-        { name: '福州', value: [119.3, 26.08], year: 2005 },
-        { name: '济南', value: [116.98, 36.67], year: 2000 },
-        { name: '太原', value: [112.53, 37.87], year: 2005 },
-        { name: '石家庄', value: [114.48, 38.03], year: 2005 },
-        { name: '长春', value: [125.35, 43.88], year: 2000 },
-        { name: '东莞', value: [113.75, 23.04], year: 2005 }
-    ];
-    
-    const newData = cities.map(c => {
-        const isActive = c.year <= year;
-        const isNew = c.year === parseInt(year);
-        return {
-            name: c.name,
-            value: c.value,
-            year: c.year,
-            itemStyle: {
-                color: isActive ? '#38bdf8' : '#334155',
-                borderColor: isNew ? '#f472b6' : (isActive ? '#38bdf8' : '#38bdf8'),
-                borderWidth: isNew ? 3 : 1,
-                shadowColor: isActive ? 'rgba(56, 189, 248, 0.6)' : 'transparent',
-                shadowBlur: isActive ? 10 : 0
-            }
-        };
-    });
-    
-    chinaMapChart.setOption({
-        series: [{
-            data: newData
-        }]
-    });
-}
-
-// 处理窗口大小变化
-window.addEventListener('resize', function() {
-    if (chinaMapChart) {
-        chinaMapChart.resize();
+        });
     }
-});
+
+    function initTimeline() {
+        const slider = document.getElementById('timeSlider');
+        const currentYear = document.getElementById('currentYear');
+        slider.oninput = function () {
+            const year = this.value;
+            currentYear.textContent = year;
+            updateEvents(year);
+        };
+        updateEvents(1950);
+    }
+
+    function updateEvents(year) {
+        document.querySelectorAll('.event-item').forEach(event => {
+            event.dataset.year <= year ? event.classList.add('active') : event.classList.remove('active');
+        });
+        updateProvinces(year);
+    }
+
+    function initChinaMap() {
+        const chartDom = document.getElementById('chinaMap');
+        chinaMapChart = echarts.init(chartDom);
+        const provinces = [
+            { name: '北京', value: [116.46, 39.92], year: 1980 },
+            { name: '上海', value: [121.48, 31.22], year: 1980 },
+            { name: '广东', value: [113.23, 23.16], year: 1985 },
+            { name: '江苏', value: [120.62, 31.3], year: 1995 },
+            { name: '浙江', value: [120.19, 30.26], year: 1995 },
+            { name: '四川', value: [104.06, 30.67], year: 1995 },
+            { name: '湖北', value: [114.31, 30.52], year: 1990 },
+            { name: '陕西', value: [108.95, 34.27], year: 1990 },
+            { name: '辽宁', value: [123.38, 41.8], year: 1990 },
+            { name: '山东', value: [116.98, 36.67], year: 2000 },
+            { name: '湖南', value: [113, 28.21], year: 2000 },
+            { name: '安徽', value: [117.27, 31.86], year: 2000 },
+            { name: '福建', value: [119.3, 26.08], year: 2005 },
+            { name: '云南', value: [102.73, 25.04], year: 2005 }
+        ];
+
+        const option = {
+            backgroundColor: 'transparent',
+            geo: { map: 'china', zoom: 1.2, itemStyle: { borderColor: '#38bdf8', areaColor: '#1e293b' } },
+            series: [{
+                type: 'scatter', coordinateSystem: 'geo', symbolSize:12,
+                data: provinces.map(p => ({name:p.name,value:p.value,itemStyle:{color:'#334155'}}))
+            }]
+        };
+        chinaMapChart.setOption(option);
+    }
+
+    function updateProvinces(year) {
+        if (!chinaMapChart) return;
+        const provinces = [
+            { name: '北京', value: [116.46, 39.92], year: 1980 },
+            { name: '上海', value: [121.48, 31.22], year: 1980 },
+            { name: '广东', value: [113.23, 23.16], year: 1985 },
+            { name: '江苏', value: [120.62, 31.3], year: 1995 },
+            { name: '浙江', value: [120.19, 30.26], year: 1995 },
+            { name: '四川', value: [104.06, 30.67], year: 1995 },
+            { name: '湖北', value: [114.31, 30.52], year: 1990 },
+            { name: '陕西', value: [108.95, 34.27], year: 1990 },
+            { name: '辽宁', value: [123.38, 41.8], year: 1990 },
+            { name: '山东', value: [116.98, 36.67], year: 2000 },
+            { name: '湖南', value: [113, 28.21], year: 2000 },
+            { name: '安徽', value: [117.27, 31.86], year: 2000 },
+            { name: '福建', value: [119.3, 26.08], year: 2005 },
+            { name: '云南', value: [102.73, 25.04], year: 2005 }
+        ];
+
+        const newData = provinces.map(p => ({
+            name: p.name, value: p.value,
+            itemStyle: { color: p.year <= year ? '#38bdf8':'#334155' }
+        }));
+        chinaMapChart.setOption({ series: [{ data: newData }] });
+    }
 </script>
 </body>
 </html>

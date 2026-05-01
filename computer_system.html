@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算机系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #fff;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .back-btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #38bdf8;
+            color: #0f172a;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #38bdf8;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 24px;
+            background: #1e293b;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .tab.active { background: #3b82f6; }
+        .tab-content {
+            display: none;
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .tab-content.active { display: block; }
+
+        /* 汇编练习样式 */
+        .terminal {
+            background: #000;
+            border-radius: 12px;
+            padding: 20px;
+            height: 620px;
+            display: flex;
+            flex-direction: column;
+            font-family: Consolas, monospace;
+        }
+        .terminal-output { flex: 1; overflow-y: auto; padding-bottom: 10px; }
+        .terminal-line { margin: 3px 0; color: #ccc; }
+        .prompt { color: #00ff00; font-weight: bold; }
+        .cmd { color: #fff; }
+        .info { color: #ccc; }
+        .success { color: #00ff00; }
+        .error { color: #ff3333; }
+        .bomb { color: #ff3333; font-weight: bold; }
+        .input-line {
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #222;
+            padding-top: 10px;
+        }
+        .input-prompt { color: #00ff00; font-weight: bold; margin-right: 8px; }
+        #cmdInput {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 14px;
+            padding: 4px;
+            font-family: Consolas, monospace;
+        }
+
+        /* 结构学习样式 */
+        .timeline-container {
+            position: relative;
+            width: 100%;
+            height: 750px;
+            background: #0f172a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .svg-wrapper { width: 100%; height: 100%; }
+        .node { stroke-width: 2.5; cursor: move; }
+        .node-text { fill: #fff; font-size: 11px; text-anchor: middle; font-weight: 600; }
+        .edge { stroke: #64748b; stroke-width: 1.2; fill: none; opacity: 0.7; }
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+        }
+        .knowledge-card {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 14px;
+            border-left: 3px solid #38bdf8;
+        }
+        .knowledge-card h3 { font-size: 15px; color: #fff; margin-bottom: 8px; }
+        .knowledge-card p { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
+        .level-bar {
+            height: 18px;
+            background: #334155;
+            border-radius: 9px;
+            overflow: hidden;
+        }
+        .level-fill {
+            height: 100%;
+            background: #38bdf8;
+            color: #fff;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+        }
+        .sub-tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .sub-tab {
+            padding: 8px 20px;
+            background: #0f172a;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .sub-tab.active { background: #38bdf8; color: #0f172a; }
+        .sub-content { display: none; }
+        .sub-content.active { display: block; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="select.html" class="back-btn">← 返回选择页</a>
+    <h1>计算机系统</h1>
+
+    <div class="tabs">
+        <div class="tab active" id="tab-asm">汇编练习</div>
+        <div class="tab" id="tab-structure">结构学习</div>
+    </div>
+
+    <!-- 汇编练习标签页 -->
+    <div class="tab-content active" id="asm-tab">
+        <div class="terminal">
+            <div class="terminal-output" id="output"></div>
+            <div class="input-line">
+                <span class="input-prompt" id="prompt">(gdb)</span>
+                <input type="text" id="cmdInput" autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    <!-- 结构学习标签页 -->
+    <div class="tab-content" id="structure-tab">
+        <div class="sub-tabs">
+            <div class="sub-tab" id="sub-know">知识图谱</div>
+            <div class="sub-tab active" id="sub-evo">网状结构图</div>
+        </div>
+
+        <div class="sub-content active" id="evolution-sub">
+            <div class="timeline-container">
+                <svg class="svg-wrapper" viewBox="0 0 1200 750">
+                    <defs>
+                        <marker id="arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+                            <polygon points="0 0,6 2,0 4" fill="#64748b"/>
+                        </marker>
+                    </defs>
+                    <g id="edges">
+                        <line class="edge" id="e1" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e2" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e3" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e4" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e5" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e6" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e7" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e8" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e9" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e10" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e11" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e12" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e13" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e14" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e15" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e16" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e17" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e18" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e19" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                        <line class="edge" id="e20" x1="" y1="" x2="" y2="" marker-end="url(#arrow)"/>
+                    </g>
+                    <g id="nodes">
+                        <g class="draggable" data-id="n0" transform="translate(600,375)">
+                            <circle class="node" r="55" fill="#1e293b" stroke="#f59e0b"/>
+                            <text class="node-text" x="0" y="0">计算机系统</text>
+                        </g>
+                        <g class="draggable" data-id="n1" transform="translate(400,200)">
+                            <circle class="node" r="40" fill="#1e293b" stroke="#38bdf8"/>
+                            <text class="node-text" x="0" y="0">CPU</text>
+                        </g>
+                        <g class="draggable" data-id="n2" transform="translate(800,200)">
+                            <circle class="node" r="40" fill="#1e293b" stroke="#a78bfa"/>
+                            <text class="node-text" x="0" y="0">存储器</text>
+                        </g>
+                        <g class="draggable" data-id="n3" transform="translate(950,375)">
+                            <circle class="node" r="40" fill="#1e293b" stroke="#34d399"/>
+                            <text class="node-text" x="0" y="0">IO设备</text>
+                        </g>
+                        <g class="draggable" data-id="n4" transform="translate(800,550)">
+                            <circle class="node" r="40" fill="#1e293b" stroke="#f43f5e"/>
+                            <text class="node-text" x="0" y="0">系统软件</text>
+                        </g>
+                        <g class="draggable" data-id="n5" transform="translate(400,550)">
+                            <circle class="node" r="40" fill="#1e293b" stroke="#fb923c"/>
+                            <text class="node-text" x="0" y="0">支撑软件</text>
+                        </g>
+                        <g class="draggable" data-id="n6" transform="translate(250,375)">
+                            <circle class="node" r="40" fill="#1e293b" stroke="#22d3ee"/>
+                            <text class="node-text" x="0" y="0">应用软件</text>
+                        </g>
+                        <g class="draggable" data-id="n7" transform="translate(280,120)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#38bdf8"/>
+                            <text class="node-text" x="0" y="0">运算器</text>
+                        </g>
+                        <g class="draggable" data-id="n8" transform="translate(480,100)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#38bdf8"/>
+                            <text class="node-text" x="0" y="0">控制器</text>
+                        </g>
+                        <g class="draggable" data-id="n9" transform="translate(700,100)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#a78bfa"/>
+                            <text class="node-text" x="0" y="0">主存</text>
+                        </g>
+                        <g class="draggable" data-id="n10" transform="translate(900,120)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#a78bfa"/>
+                            <text class="node-text" x="0" y="0">辅存</text>
+                        </g>
+                        <g class="draggable" data-id="n11" transform="translate(1020,280)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#34d399"/>
+                            <text class="node-text" x="0" y="0">输入</text>
+                        </g>
+                        <g class="draggable" data-id="n12" transform="translate(1020,470)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#34d399"/>
+                            <text class="node-text" x="0" y="0">输出</text>
+                        </g>
+                        <g class="draggable" data-id="n13" transform="translate(900,620)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#f43f5e"/>
+                            <text class="node-text" x="0" y="0">操作系统</text>
+                        </g>
+                        <g class="draggable" data-id="n14" transform="translate(700,650)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#f43f5e"/>
+                            <text class="node-text" x="0" y="0">语言处理</text>
+                        </g>
+                        <g class="draggable" data-id="n15" transform="translate(480,650)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#fb923c"/>
+                            <text class="node-text" x="0" y="0">数据库</text>
+                        </g>
+                        <g class="draggable" data-id="n16" transform="translate(280,620)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#fb923c"/>
+                            <text class="node-text" x="0" y="0">中间件</text>
+                        </g>
+                        <g class="draggable" data-id="n17" transform="translate(150,470)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#22d3ee"/>
+                            <text class="node-text" x="0" y="0">办公软件</text>
+                        </g>
+                        <g class="draggable" data-id="n18" transform="translate(150,280)">
+                            <circle class="node" r="30" fill="#1e293b" stroke="#22d3ee"/>
+                            <text class="node-text" x="0" y="0">开发工具</text>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <div class="sub-content" id="knowledge-sub">
+            <div class="knowledge-grid">
+                <div class="knowledge-card">
+                    <h3>中央处理器CPU</h3>
+                    <p>运算器+控制器，计算机的运算和控制核心</p>
+                    <div class="level-bar"><div class="level-fill" style="width:100%">核心</div></div>
+                </div>
+                <div class="knowledge-card">
+                    <h3>存储器系统</h3>
+                    <p>主存（内存）+辅存（外存），负责数据存储与读写</p>
+                    <div class="level-bar"><div class="level-fill" style="width:80%">核心</div></div>
+                </div>
+                <div class="knowledge-card">
+                    <h3>输入输出IO系统</h3>
+                    <p>实现计算机与外部设备的数据交互</p>
+                    <div class="level-bar"><div class="level-fill" style="width:60%">重要</div></div>
+                </div>
+                <div class="knowledge-card">
+                    <h3>操作系统OS</h3>
+                    <p>管理硬件与软件资源的系统软件，计算机的基石</p>
+                    <div class="level-bar"><div class="level-fill" style="width:100%">核心</div></div>
+                </div>
+                <div class="knowledge-card">
+                    <h3>语言处理程序</h3>
+                    <p>编译、汇编、解释程序，将高级语言转为机器码</p>
+                    <div class="level-bar"><div class="level-fill" style="width:80%">核心</div></div>
+                </div>
+                <div class="knowledge-card">
+                    <h3>数据库管理系统DBMS</h3>
+                    <p>负责数据的统一管理与高效存取</p>
+                    <div class="level-bar"><div class="level-fill" style="width:60%">重要</div></div>
+                </div>
+                <div class="knowledge-card">
+                    <h3>冯·诺依曼体系</h3>
+                    <p>现代计算机的核心架构：存储程序、五大核心部件</p>
+                    <div class="level-bar"><div class="level-fill" style="width:100%">核心</div></div>
+                </div>
+                <div class="knowledge-card">
+                    <h3>应用软件</h3>
+                    <p>为特定应用场景开发的软件，如办公、设计软件</p>
+                    <div class="level-bar"><div class="level-fill" style="width:40%">基础</div></div>
+                </div>
+                <div class="knowledge-card">
+                    <h3>中间件</h3>
+                    <p>位于系统与应用之间的通用服务，解决分布式通信</p>
+                    <div class="level-bar"><div class="level-fill" style="width:60%">重要</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs[0].onclick = () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        tabs[0].classList.add('active');
+        document.getElementById('asm-tab').classList.add('active');
+    };
+    tabs[1].onclick = () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        tabs[1].classList.add('active');
+        document.getElementById('structure-tab').classList.add('active');
+    };
+
+    const subTabs = document.querySelectorAll('.sub-tab');
+    const subContents = document.querySelectorAll('.sub-content');
+    subTabs[0].onclick = () => {
+        subTabs.forEach(t => t.classList.remove('active'));
+        subContents.forEach(c => c.classList.remove('active'));
+        subTabs[0].classList.add('active');
+        document.getElementById('knowledge-sub').classList.add('active');
+    };
+    subTabs[1].onclick = () => {
+        subTabs.forEach(t => t.classList.remove('active'));
+        subContents.forEach(c => c.classList.remove('active'));
+        subTabs[1].classList.add('active');
+        document.getElementById('evolution-sub').classList.add('active');
+    };
+
+    const connections = [
+        { e: 'e1', from: 'n0', to: 'n1' },
+        { e: 'e2', from: 'n0', to: 'n2' },
+        { e: 'e3', from: 'n0', to: 'n3' },
+        { e: 'e4', from: 'n0', to: 'n4' },
+        { e: 'e5', from: 'n0', to: 'n5' },
+        { e: 'e6', from: 'n0', to: 'n6' },
+        { e: 'e7', from: 'n1', to: 'n7' },
+        { e: 'e8', from: 'n1', to: 'n8' },
+        { e: 'e9', from: 'n2', to: 'n9' },
+        { e: 'e10', from: 'n2', to: 'n10' },
+        { e: 'e11', from: 'n3', to: 'n11' },
+        { e: 'e12', from: 'n3', to: 'n12' },
+        { e: 'e13', from: 'n4', to: 'n13' },
+        { e: 'e14', from: 'n4', to: 'n14' },
+        { e: 'e15', from: 'n5', to: 'n15' },
+        { e: 'e16', from: 'n5', to: 'n16' },
+        { e: 'e17', from: 'n6', to: 'n17' },
+        { e: 'e18', from: 'n6', to: 'n18' },
+        { e: 'e19', from: 'n1', to: 'n2' },
+        { e: 'e20', from: 'n4', to: 'n5' },
+    ];
+
+    function updateEdges() {
+        connections.forEach(item => {
+            const fromNode = document.querySelector(`[data-id="${item.from}"]`);
+            const toNode = document.querySelector(`[data-id="${item.to}"]`);
+            const edgeLine = document.getElementById(item.e);
+            if (!fromNode || !toNode || !edgeLine) return;
+            const fromMatrix = fromNode.transform.baseVal[0].matrix;
+            const toMatrix = toNode.transform.baseVal[0].matrix;
+            edgeLine.setAttribute('x1', fromMatrix.e);
+            edgeLine.setAttribute('y1', fromMatrix.f);
+            edgeLine.setAttribute('x2', toMatrix.e);
+            edgeLine.setAttribute('y2', toMatrix.f);
+        });
+    }
+
+    let draggingNode = null;
+    let offsetX = 0, offsetY = 0;
+    document.querySelectorAll('.draggable').forEach(node => {
+        node.onmousedown = (e) => {
+            draggingNode = node;
+            const matrix = node.transform.baseVal[0].matrix;
+            offsetX = e.clientX - matrix.e;
+            offsetY = e.clientY - matrix.f;
+        };
+    });
+    document.onmousemove = (e) => {
+        if (!draggingNode) return;
+        const x = e.clientX - offsetX;
+        const y = e.clientY - offsetY;
+        draggingNode.setAttribute('transform', `translate(${x},${y})`);
+        updateEdges();
+    };
+    document.onmouseup = () => { draggingNode = null; };
+    window.onload = updateEdges;
+
+    const output = document.getElementById('output');
+    const input = document.getElementById('cmdInput');
+    const prompt = document.getElementById('prompt');
+
+    const PHASE1 = "Border relations with Canada have never been better.";
+
+    let state = {
+        mode: "gdb",
+        hasBreak: false,
+        isRunning: false,
+        exited: true
+    };
+
+    if (input) input.focus();
+
+    if (input) {
+        input.addEventListener('keydown', e => {
+            if (e.key !== 'Enter') return;
+            const line = input.value.trim();
+            input.value = '';
+            if (state.mode === "gdb") {
+                addPrompt(line);
+                handleGDB(line);
+            } else {
+                addInput(line);
+                handleInput(line);
+            }
+            output.scrollTop = output.scrollHeight;
+        });
+    }
+
+    function handleGDB(cmd) {
+        const c = cmd.toLowerCase().trim();
+        if (c === "quit" || c === "q") {
+            addText("A debugging session is active.", "info");
+            addText("Exit anyway?", "info");
+            addText("Quit now?", "info");
+            addPrompt("y");
+            addText("", "info");
+            addText("Waiting for debugger to disconnect...", "info");
+            state.mode = "gdb";
+            state.exited = true;
+            state.hasBreak = false;
+            state.isRunning = false;
+            if (prompt) prompt.textContent = "(gdb)";
+            return;
+        }
+        if (c === "run" || c === "r") {
+            if (!state.exited) {
+                addText("The program is already being run.", "error");
+                return;
+            }
+            state.exited = false;
+            state.isRunning = true;
+            state.mode = "running";
+            if (prompt) prompt.textContent = "";
+            addText("Starting program: /home/cyn/bomb/bomb", "info");
+            addText("[Thread debugging using libthread_db enabled]", "info");
+            addText('Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".', "info");
+            addText("Welcome to my fiendish little bomb. You have 6 phases with", "info");
+            addText("which to blow yourself up. Have a nice day!", "info");
+            if (state.hasBreak) {
+                addText(PHASE1, "info");
+                addText("", "info");
+                addText("Breakpoint 1, 0x0000000000400ee0 in phase_1 ()", "success");
+            }
+            return;
+        }
+        if (c === "continue" || c === "c") {
+            if (!state.isRunning || state.exited) {
+                addText("The program is not being run.", "error");
+                return;
+            }
+            if (!state.hasBreak) {
+                addText("Continuing.", "info");
+                addText("Program exited.", "info");
+                state.exited = true;
+                state.isRunning = false;
+                switchGDB();
+                return;
+            }
+            addText("Continuing.", "info");
+            addText("", "info");
+            addText("Phase 1 defused. How about the next one?", "success");
+            state.exited = true;
+            state.isRunning = false;
+            switchGDB();
+            return;
+        }
+        if (c === "break phase_1" || c === "b phase_1") {
+            state.hasBreak = true;
+            addText("Breakpoint 1 at 0x400ee0", "success");
+            return;
+        }
+        if (c === "delete 1" || c === "d 1") {
+            state.hasBreak = false;
+            addText("Deleted breakpoint 1", "info");
+            return;
+        }
+        if (c.startsWith("disas")) {
+            if (c === "disas phase_1" || c === "disassemble phase_1") {
+                addText("Dump of assembler code for function phase_1:", "info");
+                addText("   0x0000000000400ee0 <+0>:     sub    $0x8,%rsp", "info");
+                addText("   0x0000000000400ee4 <+4>:     mov    $0x402400,%esi", "info");
+                addText("   0x0000000000400ee9 <+9>:     call   0x401338 <strings_not_equal>", "info");
+                addText("   0x0000000000400eee <+14>:    test   %eax,%eax", "info");
+                addText("   0x0000000000400ef0 <+16>:    je     0x400ef7 <phase_1+23>", "info");
+                addText("   0x0000000000400ef2 <+18>:    call   0x40143a <explode_bomb>", "info");
+                addText("   0x0000000000400ef7 <+23>:    add    $0x8,%rsp", "info");
+                addText("   0x0000000000400efb <+27>:    ret", "info");
+                addText("End of assembler dump.", "info");
+            }
+            return;
+        }
+        if (c === "x/s 0x402400") {
+            addText('0x402400:\t"Border relations with Canada have never been better."', "success");
+            return;
+        }
+        addText(`Undefined command: "${cmd}".  Try "help".`, "error");
+    }
+
+    function handleInput(line) {
+        addText("", "info");
+        addText("BOOM!!!", "bomb");
+        addText("The bomb has blown up.", "bomb");
+        addText("[Inferior 1 (process 1746) exited with code 010]", "info");
+        state.exited = true;
+        state.isRunning = false;
+        switchGDB();
+    }
+
+    function switchGDB() {
+        state.mode = "gdb";
+        if (prompt) prompt.textContent = "(gdb)";
+    }
+
+    function addPrompt(t) {
+        if (!output) return;
+        const d = document.createElement('div');
+        d.className = 'terminal-line';
+        d.innerHTML = `<span class="prompt">(gdb)</span> <span class="cmd">${t}</span>`;
+        output.appendChild(d);
+    }
+    function addInput(t) {
+        if (!output) return;
+        const d = document.createElement('div');
+        d.className = 'terminal-line';
+        d.innerHTML = `<span class="cmd">${t}</span>`;
+        output.appendChild(d);
+    }
+    function addText(t, c) {
+        if (!output) return;
+        const d = document.createElement('div');
+        d.className = 'terminal-line';
+        const s = document.createElement('span');
+        s.className = c || 'info';
+        s.textContent = t;
+        d.appendChild(s);
+        output.appendChild(d);
+    }
+</script>
+</body>
+</html>

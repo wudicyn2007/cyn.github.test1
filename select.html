@@ -9,7 +9,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+            /* 我在这里加了中文支持，修复所有乱码！ */
+            font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
         }
         body {
             min-height: 100vh;
@@ -42,6 +43,7 @@
             margin-bottom: 50px;
             color: #38bdf8;
             text-align: center;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
         }
         .card-box {
             display: flex;
@@ -53,16 +55,32 @@
         .card {
             width: 300px;
             padding: 40px 25px;
-            background: #1e293b;
+            background: linear-gradient(145deg, #1e293b, #253349);
             border-radius: 20px;
             text-align: center;
             cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.05));
+            opacity: 0;
             transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .card:hover::before {
+            opacity: 1;
         }
         .card:hover {
-            transform: translateY(-8px);
-            background: #273449;
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
         .card h3 {
             font-size: 20px;
@@ -74,8 +92,38 @@
             font-size: 14px;
         }
         .blue { border-left: 6px solid #38bdf8; }
+        .blue:hover { box-shadow: 0 20px 40px rgba(56, 189, 248, 0.2); }
         .purple { border-left: 6px solid #a78bfa; }
+        .purple:hover { box-shadow: 0 20px 40px rgba(167, 139, 250, 0.2); }
         .green { border-left: 6px solid #34d399; }
+        .green:hover { box-shadow: 0 20px 40px rgba(52, 211, 153, 0.2); }
+
+        .footer-time {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            background: linear-gradient(to top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.8));
+            backdrop-filter: blur(10px);
+            text-align: center;
+            border-top: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .footer-time .date {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        .footer-time .time {
+            font-size: 28px;
+            font-weight: 600;
+            color: #38bdf8;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+            letter-spacing: 2px;
+        }
+        body {
+            padding-bottom: 80px;
+        }
 
         .ai-chat {
             position: fixed;
@@ -214,14 +262,9 @@
     <h2 class="title">请选择学习系统</h2>
 
     <div class="card-box">
-        <div class="card blue" onclick="window.location.href='asm_checker.html'">
-            <h3>汇编语言练习题</h3>
-            <p>语法校验 | 学习辅助</p>
-        </div>
-
-        <div class="card purple" onclick="window.location.href='computer_structure.html'">
-            <h3>计算机系统逻辑结构</h3>
-            <p>结构学习 | 原理讲解</p>
+        <div class="card blue" onclick="window.location.href='computer_system.html'">
+            <h3>计算机系统</h3>
+            <p>汇编练习 | 结构学习 | 原理讲解</p>
         </div>
 
         <div class="card green" onclick="window.location.href='ai_history.html'">
@@ -249,7 +292,22 @@
         <span class="ai-trigger-text">点我召唤AI</span>
     </div>
 
+    <div class="footer-time">
+        <div class="date" id="footerDate"></div>
+        <div class="time" id="footerTime"></div>
+    </div>
+
     <script>
+        function updateTime() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+            const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('footerDate').textContent = dateStr;
+            document.getElementById('footerTime').textContent = timeStr;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
         function toggleAI() {
             const chat = document.getElementById('aiChat');
             const trigger = document.getElementById('aiTrigger');
